@@ -15,6 +15,19 @@
 </head>
 <body>
 
+    <!-- Top Promo Bar with Countdown -->
+    <div class="promo-bar" id="promo-bar">
+        <div class="promo-bar-content">
+            <span class="promo-bar-text">🎁 <strong>Especial Día del Padre:</strong> Inversión con bonificación de hasta 20% en piezas selectas. Termina en:</span>
+            <div class="countdown-timer" id="countdown-timer">
+                <span class="timer-segment"><strong id="timer-days">00</strong>d</span>
+                <span class="timer-segment"><strong id="timer-hours">00</strong>h</span>
+                <span class="timer-segment"><strong id="timer-mins">00</strong>m</span>
+                <span class="timer-segment"><strong id="timer-secs">00</strong>s</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Top Bar / Header -->
     <header class="store-header" id="store-header">
         <div class="header-container">
@@ -336,7 +349,17 @@
                 <!-- Image Column -->
                 <div class="modal-image-col">
                     <div class="modal-img-main-wrapper">
-                        <img src="" alt="Reloj" class="modal-main-img" id="modal-img">
+                        <button class="modal-gallery-arrow prev" id="modal-gallery-prev" aria-label="Foto anterior"><i data-lucide="chevron-left"></i></button>
+                        <div class="modal-img-viewport">
+                            <img src="" alt="Reloj" class="modal-main-img" id="modal-img">
+                        </div>
+                        <button class="modal-gallery-arrow next" id="modal-gallery-next" aria-label="Siguiente foto"><i data-lucide="chevron-right"></i></button>
+                    </div>
+                    <!-- Gallery Thumbnails -->
+                    <div class="modal-thumbnails-wrapper" id="modal-thumbnails-wrapper">
+                        <div class="modal-thumbnails-track" id="modal-thumbnails-track">
+                            <!-- Injected dynamically by store.js -->
+                        </div>
                     </div>
                 </div>
                 
@@ -347,8 +370,11 @@
                     <p class="modal-ref-code">Ref: <span id="modal-ref">126610LN</span></p>
                     
                     <div class="modal-price-box">
-                        <span class="price-label">Precio Sugerido</span>
-                        <div class="modal-price-value" id="modal-price">$14,500 USD</div>
+                        <span class="price-label" id="modal-price-label">Inversión Especial</span>
+                        <div class="modal-price-container">
+                            <span class="modal-price-original" id="modal-price-original" style="display: none;"></span>
+                            <span class="modal-price-value" id="modal-price">$14,500 USD</span>
+                        </div>
                     </div>
 
                     <!-- Watch Specs -->
@@ -376,6 +402,18 @@
                                 <td class="spec-value"><span class="modal-status-badge status-disponible" id="modal-spec-status">Disponible</span></td>
                             </tr>
                         </table>
+                    </div>
+
+                    <!-- Urgency Indicators -->
+                    <div class="modal-urgency-box" id="modal-urgency-box">
+                        <div class="urgency-item viewers-count">
+                            <span class="pulse-dot"></span>
+                            <span id="modal-urgency-viewers">🔥 8 coleccionistas están evaluando esta pieza ahora mismo.</span>
+                        </div>
+                        <div class="urgency-item stock-alert">
+                            <i data-lucide="alert-triangle" class="urgency-icon-alert"></i>
+                            <span>⚡ ¡Pieza única disponible! Entrega inmediata en MTY.</span>
+                        </div>
                     </div>
 
                     <!-- WhatsApp Action -->
