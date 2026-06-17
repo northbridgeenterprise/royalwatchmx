@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupScrollReveal();
     initParticleCanvas();
     animateCounters();
+    initHeroCarousel();
 });
 
 // ========================
@@ -482,3 +483,78 @@ function closeModal() {
     document.body.style.overflow = "";
     selectedWatch = null;
 }
+
+// ========================
+// HERO CAROUSEL LOGIC
+// ========================
+function initHeroCarousel() {
+    const section = document.getElementById("hero-section");
+    if (!section) return;
+
+    const slides = section.querySelectorAll(".carousel-slide");
+    const dots = section.querySelectorAll(".carousel-dots .dot");
+    const prevBtn = document.getElementById("hero-prev");
+    const nextBtn = document.getElementById("hero-next");
+
+    let currentSlide = 0;
+    const slideInterval = 6000; // 6 seconds auto rotation
+    let timer = null;
+
+    function showSlide(index) {
+        if (index >= slides.length) index = 0;
+        if (index < 0) index = slides.length - 1;
+
+        slides.forEach(s => s.classList.remove("active"));
+        dots.forEach(d => d.classList.remove("active"));
+
+        slides[index].classList.add("active");
+        dots[index].classList.add("active");
+
+        currentSlide = index;
+    }
+
+    function nextSlide() {
+        showSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+        showSlide(currentSlide - 1);
+    }
+
+    function startTimer() {
+        stopTimer();
+        timer = setInterval(nextSlide, slideInterval);
+    }
+
+    function stopTimer() {
+        if (timer) clearInterval(timer);
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener("click", () => {
+            prevSlide();
+            startTimer();
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+            nextSlide();
+            startTimer();
+        });
+    }
+
+    dots.forEach(dot => {
+        dot.addEventListener("click", () => {
+            const index = parseInt(dot.getAttribute("data-slide"));
+            showSlide(index);
+            startTimer();
+        });
+    });
+
+    startTimer();
+
+    section.addEventListener("mouseenter", stopTimer);
+    section.addEventListener("mouseleave", startTimer);
+}
+

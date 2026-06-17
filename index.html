@@ -48,28 +48,80 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero-section">
-        <!-- Ambient glow -->
-        <div class="hero-bg-glow"></div>
+    <section class="hero-section" id="hero-section">
         <!-- Particle canvas -->
         <canvas id="hero-canvas"></canvas>
         <!-- Gradient overlay -->
         <div class="hero-overlay"></div>
 
-        <div class="hero-content">
-            <span class="hero-tagline">Colección Exclusiva</span>
-            <h2 class="hero-title">Alta Relojería y<br>Piezas de Colección</h2>
-            <p class="hero-subtitle">Boutique especializada en compra, venta y consignación de las marcas de relojes más prestigiosas del mundo. Autenticidad garantizada de por vida.</p>
-            <div class="hero-actions">
-                <a href="#catalogo" class="btn-hero btn-gold">
-                    <i data-lucide="grid" style="width:14px;height:14px;"></i>
-                    Explorar Catálogo
-                </a>
-                <a href="#contacto" class="btn-hero btn-outline">
-                    <i data-lucide="calendar" style="width:14px;height:14px;"></i>
-                    Agendar Cita
-                </a>
+        <!-- Carousel Slider Wrapper -->
+        <div class="hero-carousel" id="hero-carousel">
+            <!-- Slide 1 -->
+            <div class="carousel-slide active" style="background-image: linear-gradient(rgba(5, 5, 10, 0.45), rgba(5, 5, 10, 0.9)), url('relojes/Rolex_GMT-Master_II_Bruce_Wayne_Diagonal_2220.jpg');">
+                <div class="hero-content">
+                    <span class="hero-tagline">Colección Exclusiva</span>
+                    <h2 class="hero-title">Alta Relojería &<br>Piezas de Colección</h2>
+                    <p class="hero-subtitle">Boutique especializada en compra, venta y consignación de las marcas de relojes más prestigiosas del mundo. Autenticidad garantizada de por vida.</p>
+                    <div class="hero-actions">
+                        <a href="#catalogo" class="btn-hero btn-gold">
+                            <i data-lucide="grid" style="width:14px;height:14px;"></i>
+                            Explorar Catálogo
+                        </a>
+                        <a href="#contacto" class="btn-hero btn-outline">
+                            <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+                            Agendar Cita
+                        </a>
+                    </div>
+                </div>
             </div>
+
+            <!-- Slide 2 -->
+            <div class="carousel-slide" style="background-image: linear-gradient(rgba(5, 5, 10, 0.45), rgba(5, 5, 10, 0.9)), url('relojes/AP_Royal_Oak_Chrono_Steel_Black_Diagonal_77.jpeg');">
+                <div class="hero-content">
+                    <span class="hero-tagline">Búsqueda Personalizada</span>
+                    <h2 class="hero-title">Sourcing Express<br>Bajo Pedido</h2>
+                    <p class="hero-subtitle">¿Buscas una pieza específica? La conseguimos de inmediato mediante nuestra red internacional en tiempo récord con seguridad absoluta.</p>
+                    <div class="hero-actions">
+                        <a href="https://api.whatsapp.com/send?phone=528121980008&text=Hola,%20busco%20ayuda%20para%20conseguir%20un%20reloj%20específico." target="_blank" class="btn-hero btn-gold">
+                            <i data-lucide="search" style="width:14px;height:14px;"></i>
+                            Solicitar Reloj
+                        </a>
+                        <a href="#nosotros" class="btn-hero btn-outline">
+                            Ver Nuestro Servicio
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="carousel-slide" style="background-image: linear-gradient(rgba(5, 5, 10, 0.45), rgba(5, 5, 10, 0.9)), url('relojes/Cartier_Santos_Steel_Blue_Dial_Diagonal_2042.jpg');">
+                <div class="hero-content">
+                    <span class="hero-tagline">Máxima Confianza</span>
+                    <h2 class="hero-title">Pago Contra Entrega<br>& Envíos Asegurados</h2>
+                    <p class="hero-subtitle">Entregas seguras con pago al recibir en Monterrey, Nuevo León. Envíos express blindados a nivel nacional a través de DHL Express.</p>
+                    <div class="hero-actions">
+                        <a href="https://api.whatsapp.com/send?phone=528121980008&text=Hola,%20me%20gustaría%20saber%20más%20sobre%20los%20métodos%20de%20entrega." target="_blank" class="btn-hero btn-gold">
+                            <i data-lucide="message-circle" style="width:14px;height:14px;"></i>
+                            Consultar Entregas
+                        </a>
+                        <a href="#contacto" class="btn-hero btn-outline">
+                            <i data-lucide="map-pin" style="width:14px;height:14px;"></i>
+                            Showroom Previa Cita
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carousel Controls -->
+        <button class="carousel-control prev" id="hero-prev" aria-label="Anterior slide"><i data-lucide="chevron-left"></i></button>
+        <button class="carousel-control next" id="hero-next" aria-label="Siguiente slide"><i data-lucide="chevron-right"></i></button>
+
+        <!-- Carousel Indicators (Dots) -->
+        <div class="carousel-dots" id="hero-dots">
+            <span class="dot active" data-slide="0"></span>
+            <span class="dot" data-slide="1"></span>
+            <span class="dot" data-slide="2"></span>
         </div>
 
         <!-- Stats Bar -->
@@ -187,32 +239,44 @@
                 </div>
                 <div class="about-text-side reveal">
                     <span class="sub-tag">Sobre Nosotros</span>
-                    <h3>Pasión por la Excelencia y la Alta Relojería</h3>
-                    <p>En Royal Watch MTY nos especializamos en conectar a coleccionistas y entusiastas con las piezas de relojería más exclusivas del mercado internacional. Con sede en Monterrey, Nuevo León, operamos bajo los más estrictos estándares de confidencialidad, seguridad y honestidad.</p>
-                    
-                    <div class="values-grid">
-                        <div class="value-item">
-                            <i data-lucide="shield-check"></i>
-                            <div>
-                                <h4>100% Auténtico</h4>
-                                <p>Certificamos legalmente la autenticidad de cada componente y maquinaria de por vida.</p>
-                            </div>
-                        </div>
-                        <div class="value-item">
-                            <i data-lucide="truck"></i>
-                            <div>
-                                <h4>Envíos Asegurados</h4>
-                                <p>Enviamos sin costo a todo México con paquetería de seguridad blindada.</p>
-                            </div>
-                        </div>
-                        <div class="value-item">
-                            <i data-lucide="lock"></i>
-                            <div>
-                                <h4>Confidencialidad Total</h4>
-                                <p>Cada transacción se maneja con la más absoluta discreción y privacidad.</p>
-                            </div>
-                        </div>
+                    <h3>Tu Socio de Confianza en Alta Relojería</h3>
+                    <p>En <strong>Royal Watch MTY</strong> no solo vendemos relojes; somos brókeres profesionales especializados en conectar a coleccionistas exigentes con las piezas más exclusivas del mundo. Operamos bajo estrictos estándares de confidencialidad, honestidad y seguridad.</p>
+                    <p>Nuestra especialidad es el <strong>Sourcing Internacional</strong>: si buscas una referencia descontinuada, una edición limitada o el modelo más reciente del mercado, nuestro equipo lo localiza y lo trae para ti de forma rápida e inmediata.</p>
+                </div>
+            </div>
+
+            <!-- Service Cards Row -->
+            <div class="services-title-row reveal" style="margin-top: 60px; text-align: center;">
+                <h4 style="font-family: var(--font-heading); color: var(--accent-gold); letter-spacing: 2px; text-transform: uppercase; font-size: 18px; margin-bottom: 8px;">Servicios Premium</h4>
+                <p style="color: var(--text-secondary); font-size: 13px; max-width: 500px; margin: 0 auto;">Ofrecemos una experiencia de compra diseñada para tu total tranquilidad y seguridad.</p>
+            </div>
+            
+            <div class="services-cards-grid reveal">
+                <div class="service-card">
+                    <div class="service-card-icon">
+                        <i data-lucide="search-code"></i>
                     </div>
+                    <h4>Sourcing Global</h4>
+                    <p>Ubicamos y conseguimos cualquier pieza exclusiva a través de nuestra red internacional de contactos en tiempo récord.</p>
+                    <span class="card-accent-badge">Bajo Pedido</span>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-card-icon">
+                        <i data-lucide="handshake"></i>
+                    </div>
+                    <h4>Pago Contra Entrega</h4>
+                    <p>Recibe de forma física y paga de manera segura en Monterrey y área metropolitana. Confianza absoluta y trato directo.</p>
+                    <span class="card-accent-badge">Local (MTY)</span>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-card-icon">
+                        <i data-lucide="truck"></i>
+                    </div>
+                    <h4>Envíos DHL Express</h4>
+                    <p>Envíos asegurados y blindados a todo México a través de DHL Express. Cobertura completa y entrega al día siguiente.</p>
+                    <span class="card-accent-badge">Nacional (México)</span>
                 </div>
             </div>
         </div>
