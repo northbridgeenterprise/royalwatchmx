@@ -1,7 +1,7 @@
 /* store.js - Royal Watch MTY Storefront Controller — Premium Edition */
 
 let storeProducts = [];
-let activeCurrency = "USD";
+let activeCurrency = "MXN";
 const EXCHANGE_RATE = 17.80;
 let activeBrandFilter = "Todos";
 let searchQuery = "";
@@ -312,8 +312,8 @@ function setupModalEvents() {
     waActionBtn.addEventListener("click", () => {
         if (!selectedWatch) return;
         const finalPrice = activeCurrency === "MXN"
-            ? selectedWatch.precio * EXCHANGE_RATE
-            : selectedWatch.precio;
+            ? selectedWatch.precio
+            : selectedWatch.precio / EXCHANGE_RATE;
         const currency = activeCurrency === "MXN" ? "MXN" : "USD";
         const priceText = `$${finalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
         const msg = `Hola, estoy interesado en el reloj *${selectedWatch.marca} ${selectedWatch.modelo}* (Ref: *${selectedWatch.referencia || 'S/R'}*) por *${priceText}* que vi en stock en su vitrina web. ¿Sigue disponible?`;
@@ -385,10 +385,10 @@ function renderStoreGrid() {
         let priceText = "";
         const rawPrice = p.precio;
         if (activeCurrency === "MXN") {
-            const mxnVal = rawPrice * EXCHANGE_RATE;
-            priceText = `$${mxnVal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} MXN`;
+            priceText = `$${rawPrice.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} MXN`;
         } else {
-            priceText = `$${rawPrice.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} USD`;
+            const usdVal = rawPrice / EXCHANGE_RATE;
+            priceText = `$${usdVal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} USD`;
         }
 
         const imgPath = p.imagen || "royalwatch logo hd sin fondo.png";
@@ -450,10 +450,10 @@ function openModalDetails(watch) {
 
     let priceText = "";
     if (activeCurrency === "MXN") {
-        const mxnVal = watch.precio * EXCHANGE_RATE;
-        priceText = `$${mxnVal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} MXN`;
+        priceText = `$${watch.precio.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} MXN`;
     } else {
-        priceText = `$${watch.precio.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} USD`;
+        const usdVal = watch.precio / EXCHANGE_RATE;
+        priceText = `$${usdVal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} USD`;
     }
     document.getElementById("modal-price").textContent = priceText;
 

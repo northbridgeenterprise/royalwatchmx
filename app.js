@@ -825,8 +825,8 @@ function resetQuotationForm() {
     document.getElementById("form-folio").value = generateAutoFolio();
     document.getElementById("form-fecha").value = new Date().toISOString().substring(0, 10);
     document.getElementById("form-tipo-doc").value = "cotizacion";
-    document.getElementById("form-moneda").value = "USD";
-    document.getElementById("tc-box-container").style.display = "none";
+    document.getElementById("form-moneda").value = "MXN";
+    document.getElementById("tc-box-container").style.display = "block";
     document.getElementById("form-tc").value = "17.80";
     document.getElementById("form-select-cliente").value = "";
     document.getElementById("form-empresa").value = "";
@@ -911,7 +911,7 @@ function agregarPartidaFila(data = null) {
                     <input type="number" class="partida-precio" step="0.01" value="0.00">
                 </div>
                 <label class="chk-row-usd-label" style="display: ${showUSDLabel}; font-size: 10px; margin-top: 4px; text-transform: none; cursor: pointer; color: var(--text-secondary);">
-                    <input type="checkbox" class="chk-row-usd" checked> Precio en USD (Convertir)
+                    <input type="checkbox" class="chk-row-usd"> Precio en USD (Convertir)
                 </label>
             </div>
         </div>
@@ -983,7 +983,18 @@ function agregarPartidaFila(data = null) {
         showAutocompletePanel(inputSearch, (selectedItem) => {
             inputSearch.value = `${selectedItem.marca} ${selectedItem.modelo}`;
             inputDesc.value = `${selectedItem.marca} ${selectedItem.modelo} (${selectedItem.medida} / ${selectedItem.material} / Esfera ${selectedItem.caratula})`;
-            inputPrecio.value = selectedItem.precio;
+            
+            const globalMoneda = document.getElementById("form-moneda")?.value || "USD";
+            const tc = parseFloat(document.getElementById("form-tc")?.value) || 17.80;
+            
+            if (globalMoneda === "USD") {
+                inputPrecio.value = (selectedItem.precio / tc).toFixed(2);
+            } else {
+                inputPrecio.value = selectedItem.precio;
+                const chk = tr.querySelector(".chk-row-usd");
+                if (chk) chk.checked = false;
+            }
+            
             inputRef.value = selectedItem.referencia || "";
             changeTrigger();
         });
@@ -1545,12 +1556,15 @@ function renderHistoryTable(filter = "") {
 
     filtered.forEach(q => {
         // Calculate total for history list view
-        let total = 0;
-        q.items.forEach(it => { total += it.precio * it.cantidad; });
-        let finalVal = total;
-        if (q.moneda === "MXN") {
-            finalVal = total * (parseFloat(q.tc) || 1);
-        }
+        let totalVal = 0;
+        q.items.forEach(it => {
+            let itemVal = it.precio * it.cantidad;
+            if (q.moneda === "MXN" && it.isPrecioUsd) {
+                itemVal = itemVal * (parseFloat(q.tc) || 17.80);
+            }
+            totalVal += itemVal;
+        });
+        let finalVal = totalVal;
 
         // Apply discount
         let descVal = finalVal * ((parseFloat(q.descuentoGlobal) || 0) / 100);
@@ -2013,7 +2027,8 @@ function renderCommandCenter() {
     // 1. Calculate KPI Metrics
     const activeProducts = products.filter(p => p.status === "Disponible" || p.status === "Consignado");
     const stockCount = activeProducts.length;
-    const inventoryValue = activeProducts.reduce((sum, p) => sum + (parseFloat(p.precio) || 0), 0);
+    const inventoryValueMxn = activeProducts.reduce((sum, p) => sum + (parseFloat(p.precio) || 0), 0);
+    const inventoryValue = inventoryValueMxn / 17.80;
 
     let salesTotal = 0;
     let advancesTotal = 0;
@@ -2127,12 +2142,15 @@ function renderCommandCenter() {
             recentQuotesContainer.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 20px;">No hay cotizaciones registradas.</td></tr>`;
         } else {
             recentQuotes.forEach(q => {
-                let total = 0;
-                q.items.forEach(it => { total += it.precio * it.cantidad; });
-                let finalVal = total;
-                if (q.moneda === "MXN") {
-                    finalVal = total * (parseFloat(q.tc) || 1);
-                }
+                let totalVal = 0;
+                q.items.forEach(it => {
+                    let itemVal = it.precio * it.cantidad;
+                    if (q.moneda === "MXN" && it.isPrecioUsd) {
+                        itemVal = itemVal * (parseFloat(q.tc) || 17.80);
+                    }
+                    totalVal += itemVal;
+                });
+                let finalVal = totalVal;
                 let descVal = finalVal * ((parseFloat(q.descuentoGlobal) || 0) / 100);
                 let totalNeto = finalVal - descVal;
 
