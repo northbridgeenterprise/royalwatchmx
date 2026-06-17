@@ -1,0 +1,15 @@
+# Ignore environment variables and secrets
+.env
+
+# Ignore client-specific documents and PDFs
+*.pdf
+
+# Ignore local state files
+instagram_state.json
+
+# Ignore system/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+node_modules/

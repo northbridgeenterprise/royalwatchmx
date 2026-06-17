@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Royal Watch MTY | Luxury Watch Boutique — Monterrey</title>
+    <meta name="description" content="Boutique especializada en compra, venta y consignación de relojes de lujo: Rolex, Patek Philippe, Audemars Piguet, Cartier y más. Autenticidad certificada. San Pedro Garza García, N.L.">
+    <link rel="stylesheet" href="store.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Top Bar / Header -->
+    <header class="store-header" id="store-header">
+        <div class="header-container">
+            <a href="index.html" class="store-logo">
+                <img src="royalwatch logo hd sin fondo.png" alt="Royal Watch MTY" class="logo-img">
+                <div class="logo-text">
+                    <h1>ROYAL WATCH MTY</h1>
+                    <span>Luxury Watch Boutique</span>
+                </div>
+            </a>
+
+            <!-- Navigation Menu -->
+            <nav class="store-nav">
+                <a href="#catalogo" class="nav-link">Catálogo</a>
+                <a href="#nosotros" class="nav-link">Nosotros</a>
+                <a href="#contacto" class="nav-link">Contacto</a>
+            </nav>
+
+            <!-- Quick Settings -->
+            <div class="header-settings">
+                <!-- Currency Switcher -->
+                <div class="currency-toggle-wrapper">
+                    <span class="toggle-label">Moneda:</span>
+                    <div class="currency-switch" id="currency-switch">
+                        <button class="currency-btn active" data-currency="USD">USD</button>
+                        <button class="currency-btn" data-currency="MXN">MXN</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <!-- Ambient glow -->
+        <div class="hero-bg-glow"></div>
+        <!-- Particle canvas -->
+        <canvas id="hero-canvas"></canvas>
+        <!-- Gradient overlay -->
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+            <span class="hero-tagline">Colección Exclusiva</span>
+            <h2 class="hero-title">Alta Relojería y<br>Piezas de Colección</h2>
+            <p class="hero-subtitle">Boutique especializada en compra, venta y consignación de las marcas de relojes más prestigiosas del mundo. Autenticidad garantizada de por vida.</p>
+            <div class="hero-actions">
+                <a href="#catalogo" class="btn-hero btn-gold">
+                    <i data-lucide="grid" style="width:14px;height:14px;"></i>
+                    Explorar Catálogo
+                </a>
+                <a href="#contacto" class="btn-hero btn-outline">
+                    <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+                    Agendar Cita
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="hero-stats">
+            <div class="hero-stat-item">
+                <span class="stat-number" data-target="500" id="stat-relojes">0</span>
+                <span class="stat-label">Relojes Vendidos</span>
+            </div>
+            <div class="hero-stat-item">
+                <span class="stat-number" id="stat-marcas">20+</span>
+                <span class="stat-label">Marcas de Lujo</span>
+            </div>
+            <div class="hero-stat-item">
+                <span class="stat-number" data-target="100" id="stat-autenticidad">0</span>
+                <span class="stat-label">% Auténticos</span>
+            </div>
+            <div class="hero-stat-item">
+                <span class="stat-number" data-target="10" id="stat-anos">0</span>
+                <span class="stat-label">Años de Experiencia</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Brand Marquee -->
+    <div class="marquee-section" aria-hidden="true">
+        <div class="marquee-track" id="marquee-track">
+            <span class="marquee-item">ROLEX <span class="marquee-dot"></span></span>
+            <span class="marquee-item">PATEK PHILIPPE <span class="marquee-dot"></span></span>
+            <span class="marquee-item">AUDEMARS PIGUET <span class="marquee-dot"></span></span>
+            <span class="marquee-item">CARTIER <span class="marquee-dot"></span></span>
+            <span class="marquee-item">OMEGA <span class="marquee-dot"></span></span>
+            <span class="marquee-item">TAG HEUER <span class="marquee-dot"></span></span>
+            <span class="marquee-item">HUBLOT <span class="marquee-dot"></span></span>
+            <span class="marquee-item">IWC <span class="marquee-dot"></span></span>
+            <span class="marquee-item">PANERAI <span class="marquee-dot"></span></span>
+            <span class="marquee-item">BREITLING <span class="marquee-dot"></span></span>
+            <!-- Duplicated for seamless loop -->
+            <span class="marquee-item">ROLEX <span class="marquee-dot"></span></span>
+            <span class="marquee-item">PATEK PHILIPPE <span class="marquee-dot"></span></span>
+            <span class="marquee-item">AUDEMARS PIGUET <span class="marquee-dot"></span></span>
+            <span class="marquee-item">CARTIER <span class="marquee-dot"></span></span>
+            <span class="marquee-item">OMEGA <span class="marquee-dot"></span></span>
+            <span class="marquee-item">TAG HEUER <span class="marquee-dot"></span></span>
+            <span class="marquee-item">HUBLOT <span class="marquee-dot"></span></span>
+            <span class="marquee-item">IWC <span class="marquee-dot"></span></span>
+            <span class="marquee-item">PANERAI <span class="marquee-dot"></span></span>
+            <span class="marquee-item">BREITLING <span class="marquee-dot"></span></span>
+        </div>
+    </div>
+
+    <!-- Catalog Section -->
+    <section class="catalog-section" id="catalogo">
+        <div class="catalog-container">
+            <div class="section-title-wrapper reveal">
+                <h3 class="section-title">Nuestras Piezas Disponibles</h3>
+                <div class="gold-line"></div>
+                <p class="section-subtitle">Explora nuestro inventario en stock. Cada pieza ha sido inspeccionada minuciosamente por nuestros expertos relojeros.</p>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="filters-card reveal">
+                <!-- Search and Order Row -->
+                <div class="filters-row-main">
+                    <div class="search-box-wrapper">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" id="store-search" placeholder="Buscar Rolex, Submariner, Daytona, Cartier...">
+                    </div>
+                    <div class="sort-box-wrapper">
+                        <label for="store-sort">Ordenar por:</label>
+                        <select id="store-sort">
+                            <option value="default">Relevancia</option>
+                            <option value="price-asc">Precio: Menor a Mayor</option>
+                            <option value="price-desc">Precio: Mayor a Menor</option>
+                            <option value="brand-asc">Marca: A - Z</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Brand Tags Row -->
+                <div class="brands-filter-row">
+                    <span class="filter-title">Filtrar por Marca:</span>
+                    <div class="brand-tags-container" id="brand-tags-container">
+                        <button class="brand-tag active" data-brand="Todos">Todos</button>
+                        <button class="brand-tag" data-brand="Rolex">Rolex</button>
+                        <button class="brand-tag" data-brand="Audemars Piguet">Audemars Piguet</button>
+                        <button class="brand-tag" data-brand="Patek Philippe">Patek Philippe</button>
+                        <button class="brand-tag" data-brand="Cartier">Cartier</button>
+                        <button class="brand-tag" data-brand="Omega">Omega</button>
+                        <button class="brand-tag" data-brand="Tag Heuer">Tag Heuer</button>
+                        <button class="brand-tag" data-brand="Otros">Otras Marcas</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Counter -->
+            <div class="catalog-info-bar">
+                <span>Mostrando <strong id="catalog-count">0</strong> piezas en catálogo</span>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="store-grid" id="store-grid">
+                <!-- Watch Cards Injected Dynamically by store.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section class="about-section" id="nosotros">
+        <div class="about-container">
+            <div class="about-grid">
+                <div class="about-image-side reveal">
+                    <div class="about-logo-card">
+                        <img src="royalwatch logo hd sin fondo.png" alt="Royal Watch MTY" class="about-logo-img">
+                    </div>
+                </div>
+                <div class="about-text-side reveal">
+                    <span class="sub-tag">Sobre Nosotros</span>
+                    <h3>Pasión por la Excelencia y la Alta Relojería</h3>
+                    <p>En Royal Watch MTY nos especializamos en conectar a coleccionistas y entusiastas con las piezas de relojería más exclusivas del mercado internacional. Con sede en Monterrey, Nuevo León, operamos bajo los más estrictos estándares de confidencialidad, seguridad y honestidad.</p>
+                    
+                    <div class="values-grid">
+                        <div class="value-item">
+                            <i data-lucide="shield-check"></i>
+                            <div>
+                                <h4>100% Auténtico</h4>
+                                <p>Certificamos legalmente la autenticidad de cada componente y maquinaria de por vida.</p>
+                            </div>
+                        </div>
+                        <div class="value-item">
+                            <i data-lucide="truck"></i>
+                            <div>
+                                <h4>Envíos Asegurados</h4>
+                                <p>Enviamos sin costo a todo México con paquetería de seguridad blindada.</p>
+                            </div>
+                        </div>
+                        <div class="value-item">
+                            <i data-lucide="lock"></i>
+                            <div>
+                                <h4>Confidencialidad Total</h4>
+                                <p>Cada transacción se maneja con la más absoluta discreción y privacidad.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Footer -->
+    <footer class="store-footer" id="contacto">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-info">
+                    <img src="royalwatch logo hd sin fondo.png" alt="Royal Watch Logo" class="footer-logo">
+                    <h4>ROYAL WATCH MTY</h4>
+                    <p>Luxury Watch Boutique &amp; Private Showroom</p>
+                    <p class="location-text"><i data-lucide="map-pin"></i> San Pedro Garza García, N.L. (Previa Cita)</p>
+                </div>
+                <div class="footer-links">
+                    <h5>Enlaces</h5>
+                    <a href="#catalogo">Catálogo de Relojes</a>
+                    <a href="#nosotros">Sobre Nosotros</a>
+                    <a href="#contacto">Contacto Oficial</a>
+                </div>
+                <div class="footer-contact">
+                    <h5>Contacto Directo</h5>
+                    <a href="https://api.whatsapp.com/send?phone=528121980008" target="_blank" class="contact-btn wa-btn">
+                        <i data-lucide="message-circle"></i> Escríbenos en WhatsApp
+                    </a>
+                    <p class="tel-number"><i data-lucide="phone"></i> 81 2198 0008</p>
+                    <p class="email-address"><i data-lucide="mail"></i> contacto@royalwatchmty.com</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 Royal Watch MTY. Todos los derechos reservados. Las marcas registradas e imágenes de relojes pertenecen a sus respectivos fabricantes.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <div class="whatsapp-float" id="wa-float">
+        <span class="wa-tooltip">¡Escríbenos ahora!</span>
+        <a href="https://api.whatsapp.com/send?phone=528121980008&text=Hola%2C%20me%20interesa%20conocer%20su%20catálogo%20de%20relojes." 
+           target="_blank" 
+           class="whatsapp-float-btn"
+           aria-label="Contactar por WhatsApp"
+           id="wa-float-btn">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- Lightbox Modal for Product Details -->
+    <div class="modal-overlay" id="product-modal">
+        <div class="modal-container">
+            <button class="modal-close-btn" id="modal-close"><i data-lucide="x"></i></button>
+            <div class="modal-content-grid">
+                <!-- Image Column -->
+                <div class="modal-image-col">
+                    <div class="modal-img-main-wrapper">
+                        <img src="" alt="Reloj" class="modal-main-img" id="modal-img">
+                    </div>
+                </div>
+                
+                <!-- Info Column -->
+                <div class="modal-info-col">
+                    <span class="modal-brand" id="modal-brand">ROLEX</span>
+                    <h4 class="modal-model" id="modal-model">Submariner Date 126610LN</h4>
+                    <p class="modal-ref-code">Ref: <span id="modal-ref">126610LN</span></p>
+                    
+                    <div class="modal-price-box">
+                        <span class="price-label">Precio Sugerido</span>
+                        <div class="modal-price-value" id="modal-price">$14,500 USD</div>
+                    </div>
+
+                    <!-- Watch Specs -->
+                    <div class="modal-specs-box">
+                        <h5>Especificaciones Técnicas</h5>
+                        <table class="specs-table">
+                            <tr>
+                                <td class="spec-label">Diámetro Caja</td>
+                                <td class="spec-value" id="modal-spec-medida">41mm</td>
+                            </tr>
+                            <tr>
+                                <td class="spec-label">Material de Caja</td>
+                                <td class="spec-value" id="modal-spec-material">Acero Oystersteel</td>
+                            </tr>
+                            <tr>
+                                <td class="spec-label">Carátula / Bisel</td>
+                                <td class="spec-value" id="modal-spec-caratula">Negra</td>
+                            </tr>
+                            <tr>
+                                <td class="spec-label">Movimiento</td>
+                                <td class="spec-value" id="modal-spec-movimiento">Automático (Cal. 3235)</td>
+                            </tr>
+                            <tr>
+                                <td class="spec-label">Estatus</td>
+                                <td class="spec-value"><span class="modal-status-badge status-disponible" id="modal-spec-status">Disponible</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- WhatsApp Action -->
+                    <div class="modal-action-box">
+                        <button class="btn-action-wa" id="modal-btn-wa">
+                            <i data-lucide="message-square"></i> Consultar Disponibilidad por WhatsApp
+                        </button>
+                        <p class="action-caption">Un asesor te atenderá personalmente de inmediato para coordinar el pago o resolver dudas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="watches_catalog.js"></script>
+    <script src="store.js"></script>
+</body>
+</html>
