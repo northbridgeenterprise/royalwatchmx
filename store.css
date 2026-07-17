@@ -2227,4 +2227,144 @@ body {
     }
 }
 
+/* ==================================================================== */
+/* IPHONE & MOBILE RESPONSIVENESS OVERRIDES                             */
+/* ==================================================================== */
+
+/* Smooth Scroll Offset for Fixed Headers */
+@media (max-width: 768px) {
+    html {
+        scroll-padding-top: 130px;
+    }
+}
+@media (min-width: 769px) {
+    html {
+        scroll-padding-top: 110px;
+    }
+}
+
+/* Hero Carousel & Content Offsets on Mobile */
+@media (max-width: 768px) {
+    .carousel-control {
+        display: none !important; /* Hide left/right arrows to prevent overlapping title text */
+    }
+    .carousel-dots {
+        bottom: 70px; /* Position dots neatly above stats bar */
+    }
+    .hero-content {
+        padding-top: 120px; /* Offset the fixed header stack height */
+        padding-bottom: 40px;
+    }
+}
+@media (max-width: 480px) {
+    .carousel-dots {
+        bottom: 24px; /* Position dots close to bottom since stats bar is hidden */
+    }
+    .hero-content {
+        padding-top: 110px;
+    }
+}
+
+/* Header & Navigation Spacing on Narrow Screens (iPhone) */
+@media (max-width: 500px) {
+    .header-container {
+        padding: 10px 12px;
+    }
+    .store-nav {
+        gap: 10px;
+    }
+    .nav-link {
+        font-size: 10px;
+        letter-spacing: 0.5px;
+    }
+    .currency-toggle-wrapper {
+        gap: 4px;
+    }
+    .currency-toggle-wrapper .toggle-label {
+        display: none; /* Hide "Moneda:" text to save horizontal space */
+    }
+    .currency-btn {
+        padding: 3px 8px;
+        font-size: 10px;
+    }
+    .logo-img {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* Horizontal-scrolling Brand Tags on Mobile (Native Feel) */
+@media (max-width: 500px) {
+    .brand-tags-container {
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        padding-bottom: 8px;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none; /* Hide default scrollbar (Firefox) */
+        -ms-overflow-style: none; /* Hide default scrollbar (IE/Edge) */
+    }
+    .brand-tags-container::-webkit-scrollbar {
+        display: none; /* Hide default scrollbar (Safari/Chrome) */
+    }
+    .brand-tag {
+        flex: 0 0 auto;
+        scroll-snap-align: start;
+    }
+}
+
+/* Product & Info Grid Adjustments on Small Screens */
+@media (max-width: 480px) {
+    .store-grid {
+        grid-template-columns: 1fr !important; /* Single column layout for perfect cards */
+        gap: 20px;
+    }
+    .services-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px;
+    }
+    .catalog-section {
+        padding: 48px 16px;
+    }
+    .about-section {
+        padding: 48px 16px;
+    }
+}
+
+/* Details Lightbox Modal Adjustments on Mobile */
+@media (max-width: 480px) {
+    .modal-container {
+        padding: 24px 16px 20px 16px !important;
+    }
+    .modal-price-box {
+        padding: 12px 16px;
+        margin-bottom: 16px;
+    }
+    .modal-price-value {
+        font-size: 22px;
+    }
+    .specs-table td {
+        padding: 8px 0;
+        font-size: 12px;
+    }
+    .modal-specs-box h5 {
+        margin-bottom: 8px;
+    }
+    .modal-urgency-box {
+        padding: 10px 12px;
+        margin-bottom: 16px;
+        gap: 8px;
+    }
+    .btn-action-wa {
+        padding: 12px;
+        font-size: 12.5px;
+    }
+    .modal-close-btn {
+        top: 12px;
+        right: 12px;
+        padding: 6px;
+    }
+}
+
 

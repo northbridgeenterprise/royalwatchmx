@@ -872,8 +872,8 @@ function initLiveActivityToasts() {
 // PROMO COUNTDOWN
 // ========================
 function initPromoCountdown() {
-    // Set target date for Father's Day: June 21, 2026 23:59:59
-    const targetDate = new Date("June 21, 2026 23:59:59").getTime();
+    // Set target date for July Promo: July 31, 2026 23:59:59
+    const targetDate = new Date("July 31, 2026 23:59:59").getTime();
 
     function updateCountdown() {
         const now = new Date().getTime();
