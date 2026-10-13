@@ -9,7 +9,7 @@ let activeSort = "default";
 let selectedWatch = null;
 let modalImages = [];
 let modalImgIndex = 0;
-let viewersInterval = null;
+let modalReturnFocus = null;
 
 // ========================
 // INIT
@@ -31,28 +31,76 @@ document.addEventListener("DOMContentLoaded", () => {
     setupScrollHeader();
     setupScrollReveal();
     initParticleCanvas();
-    animateCounters();
     initHeroCarousel();
-    initLiveActivityToasts();
+
+    // Reflect inventory changes made in another tab of this browser.
+    window.addEventListener("storage", (event) => {
+        if (["rw_custom_products", "rw_deleted_products", "rw_product_statuses"].includes(event.key)) {
+            loadStoreCatalog();
+            renderStoreGrid();
+        }
+    });
 });
+
+// ========================
+// SAFE DATA AND PRICE HELPERS
+// ========================
+function readStoredJSON(key, fallback) {
+    try {
+        const value = localStorage.getItem(key);
+        return value ? JSON.parse(value) : fallback;
+    } catch {
+        return fallback;
+    }
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+    })[char]);
+}
+
+function safeCatalogImage(value) {
+    const source = String(value || "").trim();
+    if (/^https:\/\//i.test(source)) return source;
+    if (/^relojes\/[\w .()%-]+\.(?:jpe?g|png|webp)$/i.test(source)) return source;
+    if (source === "royalwatch logo hd sin fondo.png") return source;
+    return "royalwatch logo hd sin fondo.png";
+}
+
+function getPriceInCurrency(priceMXN, currency = activeCurrency) {
+    const amount = Number(priceMXN);
+    if (!Number.isFinite(amount)) return null;
+    return currency === "USD" ? amount / EXCHANGE_RATE : amount;
+}
+
+function formatPrice(priceMXN, currency = activeCurrency) {
+    const amount = getPriceInCurrency(priceMXN, currency);
+    if (amount === null) return "Consultar precio";
+    return `$${amount.toLocaleString("en-US", { maximumFractionDigits: 0 })} ${currency}`;
+}
 
 // ========================
 // CATALOG LOADING
 // ========================
 function loadStoreCatalog() {
+    migrateStoredCatalogPrices();
     let baseCatalog = [];
     if (typeof WATCHES_PRODUCTS !== 'undefined' && WATCHES_PRODUCTS.length > 0) {
         baseCatalog = WATCHES_PRODUCTS;
     }
 
-    const customProds = JSON.parse(localStorage.getItem("rw_custom_products") || "[]");
-    const deletedRefs = JSON.parse(localStorage.getItem("rw_deleted_products") || "[]");
+    const customValue = readStoredJSON("rw_custom_products", []);
+    const deletedValue = readStoredJSON("rw_deleted_products", []);
+    const customProds = Array.isArray(customValue) ? customValue : [];
+    const deletedRefs = Array.isArray(deletedValue) ? deletedValue : [];
     const deletedSet = new Set(deletedRefs.filter(Boolean));
 
     let merged = baseCatalog.filter(p => !p.referencia || !deletedSet.has(p.referencia));
     merged = [...merged, ...customProds];
 
-    const statusOverrides = JSON.parse(localStorage.getItem("rw_product_statuses") || "{}");
+    const statusValue = readStoredJSON("rw_product_statuses", {});
+    const statusOverrides = statusValue && typeof statusValue === "object" && !Array.isArray(statusValue) ? statusValue : {};
     merged.forEach(p => {
         const key = p.referencia || `${p.marca}_${p.modelo}`;
         p.status = statusOverrides[key] || p.status || "Disponible";
@@ -134,52 +182,13 @@ function observeCards() {
     cards.forEach(card => cardObserver.observe(card));
 }
 
-// ========================
-// ANIMATED STAT COUNTERS
-// ========================
-function animateCounters() {
-    const statsSection = document.querySelector(".hero-stats");
-    if (!statsSection) return;
-
-    const counters = [
-        { el: document.getElementById("stat-relojes"), target: 500, suffix: "+" },
-        { el: document.getElementById("stat-autenticidad"), target: 100, suffix: "%" },
-        { el: document.getElementById("stat-anos"), target: 10, suffix: "+" },
-    ];
-
-    const observer = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-            counters.forEach(c => animateSingleCounter(c.el, c.target, c.suffix));
-            observer.disconnect();
-        }
-    }, { threshold: 0.5 });
-
-    observer.observe(statsSection);
-}
-
-function animateSingleCounter(el, target, suffix = "") {
-    if (!el) return;
-    const duration = 1800;
-    const startTime = performance.now();
-
-    function update(currentTime) {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        // Ease out cubic
-        const eased = 1 - Math.pow(1 - progress, 3);
-        const value = Math.round(eased * target);
-        el.textContent = value + suffix;
-        if (progress < 1) requestAnimationFrame(update);
-    }
-    requestAnimationFrame(update);
-}
 
 // ========================
 // PARTICLE CANVAS (GOLD DUST)
 // ========================
 function initParticleCanvas() {
     const canvas = document.getElementById("hero-canvas");
-    if (!canvas) return;
+    if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const ctx = canvas.getContext("2d");
     let particles = [];
@@ -273,6 +282,7 @@ function setupStoreFilters() {
         tag.addEventListener("click", () => {
             brandTags.forEach(t => t.classList.remove("active"));
             tag.classList.add("active");
+            brandTags.forEach(button => button.setAttribute("aria-pressed", String(button === tag)));
             activeBrandFilter = tag.getAttribute("data-brand");
             renderStoreGrid();
         });
@@ -290,6 +300,7 @@ function setupCurrencySwitcher() {
         btn.addEventListener("click", () => {
             buttons.forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
+            buttons.forEach(button => button.setAttribute("aria-pressed", String(button === btn)));
             activeCurrency = btn.getAttribute("data-currency");
             renderStoreGrid();
         });
@@ -332,7 +343,24 @@ function setupModalEvents() {
         if (!modal.classList.contains("active")) return;
         if (e.key === "Escape") {
             closeModal();
-        } else if (modalImages.length > 1) {
+            return;
+        }
+        if (e.key === "Tab") {
+            const focusable = [...modal.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+                .filter(element => element.offsetParent !== null);
+            if (!focusable.length) {
+                e.preventDefault();
+                modal.querySelector(".modal-container").focus();
+            } else if (e.shiftKey && document.activeElement === focusable[0]) {
+                e.preventDefault();
+                focusable[focusable.length - 1].focus();
+            } else if (!e.shiftKey && document.activeElement === focusable[focusable.length - 1]) {
+                e.preventDefault();
+                focusable[0].focus();
+            }
+            return;
+        }
+        if (modalImages.length > 1) {
             if (e.key === "ArrowLeft") {
                 const newIdx = (modalImgIndex - 1 + modalImages.length) % modalImages.length;
                 changeModalImage(newIdx);
@@ -345,14 +373,10 @@ function setupModalEvents() {
 
     waActionBtn.addEventListener("click", () => {
         if (!selectedWatch) return;
-        const finalPrice = activeCurrency === "MXN"
-            ? selectedWatch.precio
-            : selectedWatch.precio / EXCHANGE_RATE;
-        const currency = activeCurrency === "MXN" ? "MXN" : "USD";
-        const priceText = `$${finalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
+        const priceText = formatPrice(selectedWatch.precio);
         const msg = `Hola, estoy interesado en el reloj *${selectedWatch.marca} ${selectedWatch.modelo}* (Ref: *${selectedWatch.referencia || 'S/R'}*) por *${priceText}* que vi en stock en su vitrina web. ¿Sigue disponible?`;
         const waUrl = `https://api.whatsapp.com/send?phone=528121980008&text=${encodeURIComponent(msg)}`;
-        window.open(waUrl, "_blank");
+        window.open(waUrl, "_blank", "noopener,noreferrer");
     });
 }
 
@@ -407,7 +431,7 @@ function renderStoreGrid() {
 
     // Render cards
     filtered.forEach(p => {
-        const card = document.createElement("div");
+        const card = document.createElement("article");
         card.className = "watch-card"; // starts hidden, revealed by IntersectionObserver
 
         let currentStatus = p.status || "Disponible";
@@ -421,53 +445,47 @@ function renderStoreGrid() {
         }
 
         let priceHTML = "";
-        const rawPrice = p.precio;
-        const rawOriginal = p.precioAnterior;
-        if (activeCurrency === "MXN") {
-            if (rawOriginal) {
-                const originalText = `$${rawOriginal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} MXN`;
-                priceHTML += `<span class="card-price-original">${originalText}</span>`;
-            }
-            const currentText = `$${rawPrice.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} MXN`;
-            priceHTML += `<span class="card-price">${currentText}</span>`;
-        } else {
-            if (rawOriginal) {
-                const usdOriginal = rawOriginal / EXCHANGE_RATE;
-                const originalText = `$${usdOriginal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} USD`;
-                priceHTML += `<span class="card-price-original">${originalText}</span>`;
-            }
-            const usdVal = rawPrice / EXCHANGE_RATE;
-            const currentText = `$${usdVal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} USD`;
-            priceHTML += `<span class="card-price">${currentText}</span>`;
-        }
+        const rawPrice = Number(p.precio);
+        const rawOriginal = Number(p.precioAnterior) || null;
+        if (rawOriginal) priceHTML += `<span class="card-price-original">${escapeHTML(formatPrice(rawOriginal))}</span>`;
+        priceHTML += `<span class="card-price">${escapeHTML(formatPrice(rawPrice))}</span>`;
 
-        const imgPath = p.imagen || "royalwatch logo hd sin fondo.png";
+        const imgPath = escapeHTML(safeCatalogImage(p.imagen));
+        const brand = escapeHTML(p.marca);
+        const model = escapeHTML(p.modelo);
+        const reference = escapeHTML(p.referencia || "S/R");
+        const statusLabel = escapeHTML(currentStatus);
+        const size = escapeHTML(p.medida || "");
+        const material = escapeHTML(p.material || "");
+        const dial = escapeHTML(p.caratula || "");
 
         card.innerHTML = `
             <div class="card-image-wrapper">
-                <span class="card-badge ${statusClass}">${currentStatus}</span>
-                <img src="${imgPath}" alt="${p.marca} ${p.modelo}" class="card-img" loading="lazy">
+                <span class="card-badge ${statusClass}">${statusLabel}</span>
+                <img src="${imgPath}" alt="${brand} ${model}" class="card-img" loading="lazy">
                 <div class="card-img-overlay">
-                    <button class="overlay-btn">Ver Pieza</button>
+                    <button type="button" class="overlay-btn" aria-label="Ver detalles de ${brand} ${model}">Ver Pieza</button>
                 </div>
             </div>
             <div class="card-info">
-                <span class="card-brand">${p.marca}</span>
-                <h4 class="card-model" title="${p.modelo}">${p.modelo}</h4>
-                <p class="card-ref">Ref: ${p.referencia || 'S/R'}</p>
+                <span class="card-brand">${brand}</span>
+                <h4 class="card-model" title="${model}">${model}</h4>
+                <p class="card-ref">Ref: ${reference}</p>
                 <div class="card-specs">
-                    ${p.medida ? `<span class="card-spec-tag">${p.medida}</span>` : ''}
-                    ${p.material ? `<span class="card-spec-tag">${p.material}</span>` : ''}
-                    ${p.caratula ? `<span class="card-spec-tag">${p.caratula}</span>` : ''}
+                    ${size ? `<span class="card-spec-tag">${size}</span>` : ''}
+                    ${material ? `<span class="card-spec-tag">${material}</span>` : ''}
+                    ${dial ? `<span class="card-spec-tag">${dial}</span>` : ''}
                 </div>
                 <div class="card-footer">
                     <div style="display:flex; align-items:baseline;">${priceHTML}</div>
-                    <button class="card-btn">Ver Detalles</button>
+                    <button type="button" class="card-btn" aria-label="Ver detalles de ${brand} ${model}">Ver Detalles</button>
                 </div>
             </div>
         `;
 
-        card.addEventListener("click", () => openModalDetails(p));
+        card.querySelectorAll(".overlay-btn, .card-btn").forEach(button => {
+            button.addEventListener("click", () => openModalDetails(p));
+        });
         grid.appendChild(card);
     });
 
@@ -488,6 +506,7 @@ function renderStoreGrid() {
 function openModalDetails(watch) {
     selectedWatch = watch;
     const modal = document.getElementById("product-modal");
+    modalReturnFocus = document.activeElement;
 
     // Populate images array
     modalImages = [watch.imagen];
@@ -500,7 +519,7 @@ function openModalDetails(watch) {
     // Reset main image display
     const imgEl = document.getElementById("modal-img");
     if (imgEl) {
-        imgEl.src = watch.imagen || "royalwatch logo hd sin fondo.png";
+        imgEl.src = safeCatalogImage(watch.imagen);
         imgEl.alt = `${watch.marca} ${watch.modelo}`;
     }
 
@@ -524,9 +543,12 @@ function openModalDetails(watch) {
         if (track) {
             track.innerHTML = "";
             modalImages.forEach((imgSrc, idx) => {
-                const thumb = document.createElement("div");
+                const thumb = document.createElement("button");
+                thumb.type = "button";
                 thumb.className = `modal-thumb ${idx === 0 ? 'active' : ''}`;
-                thumb.innerHTML = `<img src="${imgSrc}" alt="Miniatura ${idx + 1}">`;
+                thumb.setAttribute("aria-label", `Ver foto ${idx + 1}`);
+                thumb.setAttribute("aria-current", String(idx === 0));
+                thumb.innerHTML = `<img src="${escapeHTML(safeCatalogImage(imgSrc))}" alt="">`;
                 thumb.addEventListener("click", () => {
                     if (modalImgIndex !== idx) {
                         changeModalImage(idx);
@@ -546,25 +568,10 @@ function openModalDetails(watch) {
     document.getElementById("modal-model").textContent = watch.modelo;
     document.getElementById("modal-ref").textContent = watch.referencia || "S/R";
 
-    // Setup prices in modal
-    let priceText = "";
-    let originalPriceText = "";
-    const rawPrice = watch.precio;
-    const rawOriginal = watch.precioAnterior;
-
-    if (activeCurrency === "MXN") {
-        priceText = `$${rawPrice.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} MXN`;
-        if (rawOriginal) {
-            originalPriceText = `$${rawOriginal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} MXN`;
-        }
-    } else {
-        const usdVal = rawPrice / EXCHANGE_RATE;
-        priceText = `$${usdVal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} USD`;
-        if (rawOriginal) {
-            const usdOriginal = rawOriginal / EXCHANGE_RATE;
-            originalPriceText = `$${usdOriginal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} USD`;
-        }
-    }
+    // Catalog prices are stored in USD (same unit as the admin form).
+    const rawOriginal = Number(watch.precioAnterior) || null;
+    const priceText = formatPrice(watch.precio);
+    const originalPriceText = rawOriginal ? formatPrice(rawOriginal) : "";
 
     document.getElementById("modal-price").textContent = priceText;
     const modalOriginalEl = document.getElementById("modal-price-original");
@@ -597,55 +604,34 @@ function openModalDetails(watch) {
     else if (currentStatus === "Consignado") statusEl.classList.add("status-consignado");
     else if (currentStatus === "Vendido") statusEl.classList.add("status-vendido");
 
-    // Configure viewers count & urgency box
-    const urgencyBox = document.getElementById("modal-urgency-box");
-    const viewersEl = document.getElementById("modal-urgency-viewers");
-    const stockAlertEl = urgencyBox ? urgencyBox.querySelector(".stock-alert") : null;
-
-    if (urgencyBox) {
-        if (currentStatus === "Disponible" || currentStatus === "Consignado" || currentStatus === "Oportunidad") {
-            urgencyBox.style.display = "flex";
-            
-            // Set dynamic viewers counter
-            if (viewersEl) {
-                if (viewersInterval) clearInterval(viewersInterval);
-                const updateViewers = () => {
-                    const min = 5;
-                    const max = 16;
-                    const count = Math.floor(Math.random() * (max - min + 1)) + min;
-                    viewersEl.innerHTML = `🔥 <strong>${count}</strong> coleccionistas están evaluando esta pieza ahora mismo.`;
-                };
-                updateViewers();
-                viewersInterval = setInterval(updateViewers, 7000);
-            }
-
-            // Set stock alert
-            if (stockAlertEl) {
-                stockAlertEl.innerHTML = `<i data-lucide="alert-triangle" class="urgency-icon-alert"></i> <span>⚡ ¡Pieza única disponible! Entrega inmediata en MTY.</span>`;
-            }
-        } else {
-            // Hide urgency if it's already sold or reserved
-            urgencyBox.style.display = "none";
-            if (viewersInterval) clearInterval(viewersInterval);
-        }
+    const availabilityNote = document.getElementById("modal-availability-note");
+    if (availabilityNote) {
+        const notes = {
+            "Disponible": "La disponibilidad puede cambiar. Confirma la pieza antes de tu visita.",
+            "Consignado": "Pieza en consignación. Consulta su disponibilidad con nuestro equipo.",
+            "Apartado": "Esta pieza está apartada. Escríbenos para conocer alternativas.",
+            "Vendido": "Esta pieza ya fue vendida. Podemos ayudarte a encontrar una similar."
+        };
+        availabilityNote.textContent = notes[currentStatus] || "Consulta con nuestro equipo el estado actual de esta pieza.";
     }
 
     modal.classList.add("active");
+    modal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
+    document.getElementById("modal-close").focus();
     initIcons();
 }
 
 function closeModal() {
     const modal = document.getElementById("product-modal");
     modal.classList.remove("active");
+    modal.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
     selectedWatch = null;
     modalImages = [];
     modalImgIndex = 0;
-    if (viewersInterval) {
-        clearInterval(viewersInterval);
-        viewersInterval = null;
-    }
+    if (modalReturnFocus && typeof modalReturnFocus.focus === "function") modalReturnFocus.focus();
+    modalReturnFocus = null;
 }
 
 function changeModalImage(index) {
@@ -659,7 +645,7 @@ function changeModalImage(index) {
     viewport.classList.add("fade-out");
 
     setTimeout(() => {
-        imgEl.src = modalImages[modalImgIndex];
+        imgEl.src = safeCatalogImage(modalImages[modalImgIndex]);
         viewport.classList.remove("fade-out");
 
         // Update active thumbnail
@@ -669,8 +655,10 @@ function changeModalImage(index) {
             thumbs.forEach((thumb, idx) => {
                 if (idx === modalImgIndex) {
                     thumb.classList.add("active");
+                    thumb.setAttribute("aria-current", "true");
                 } else {
                     thumb.classList.remove("active");
+                    thumb.setAttribute("aria-current", "false");
                 }
             });
 
@@ -704,10 +692,12 @@ function initHeroCarousel() {
         if (index < 0) index = slides.length - 1;
 
         slides.forEach(s => s.classList.remove("active"));
-        dots.forEach(d => d.classList.remove("active"));
+        dots.forEach((dot, dotIndex) => {
+            dot.classList.toggle("active", dotIndex === index);
+            dot.setAttribute("aria-pressed", String(dotIndex === index));
+        });
 
         slides[index].classList.add("active");
-        dots[index].classList.add("active");
 
         currentSlide = index;
     }
@@ -720,9 +710,11 @@ function initHeroCarousel() {
         showSlide(currentSlide - 1);
     }
 
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     function startTimer() {
         stopTimer();
-        timer = setInterval(nextSlide, slideInterval);
+        if (!reducedMotion) timer = setInterval(nextSlide, slideInterval);
     }
 
     function stopTimer() {
@@ -755,115 +747,9 @@ function initHeroCarousel() {
 
     section.addEventListener("mouseenter", stopTimer);
     section.addEventListener("mouseleave", startTimer);
-}
-
-// ========================
-// LIVE ACTIVITY TOASTS
-// ========================
-function initLiveActivityToasts() {
-    let container = document.getElementById("activity-toast-container");
-    if (!container) {
-        container = document.createElement("div");
-        container.id = "activity-toast-container";
-        container.className = "activity-toast-container";
-        document.body.appendChild(container);
-    }
-
-    const notifications = [
-        {
-            title: "Pregunta Reciente",
-            body: "<strong>Carlos G.</strong> de San Pedro Garza García preguntó por el <strong>Rolex GMT-Master II Bruce Wayne</strong>.",
-            time: "Hace 2 minutos",
-            icon: "message-square"
-        },
-        {
-            title: "Pieza Apartada",
-            body: "<strong>Mauricio A.</strong> de Cumbres, Mty apartó un <strong>Cartier Santos Steel Blue Dial</strong>.",
-            time: "Hace 14 minutos",
-            icon: "lock"
-        },
-        {
-            title: "Cotización Enviada",
-            body: "<strong>Dra. Garza</strong> de San Jerónimo cotizó un <strong>Rolex Daytona Panda Nuevo</strong>.",
-            time: "Hace 28 minutos",
-            icon: "file-text"
-        },
-        {
-            title: "Pregunta Reciente",
-            body: "<strong>Ing. Beto</strong> de Carretera Nacional preguntó por la disponibilidad del <strong>Rolex Submariner No-Date</strong>.",
-            time: "Hace 8 minutos",
-            icon: "message-square"
-        },
-        {
-            title: "Visita al Showroom",
-            body: "<strong>Roberto S.</strong> de Contry agendó cita para ver el <strong>Audemars Piguet Royal Oak Frosted Black</strong>.",
-            time: "Hace 1 hora",
-            icon: "calendar"
-        },
-        {
-            title: "Pieza Reservada",
-            body: "Coleccionista privado de San Pedro reservó un <strong>Rolex Daytona Gold Turquoise Dial</strong>.",
-            time: "Hace 45 minutos",
-            icon: "bookmark"
-        },
-        {
-            title: "Cotización Especial",
-            body: "<strong>Claudio H.</strong> de Valle Oriente cotizó un <strong>Cartier Ballon Bleu Steel</strong>.",
-            time: "Hace 5 minutos",
-            icon: "sparkles"
-        }
-    ];
-
-    let currentToastIndex = 0;
-
-    function showNextToast() {
-        const item = notifications[currentToastIndex];
-        currentToastIndex = (currentToastIndex + 1) % notifications.length;
-
-        // Clear current toast if any
-        container.innerHTML = "";
-
-        // Create new toast element
-        const toast = document.createElement("div");
-        toast.className = "activity-toast";
-        toast.innerHTML = `
-            <div class="activity-toast-icon">
-                <i data-lucide="${item.icon}"></i>
-            </div>
-            <div class="activity-toast-content">
-                <span class="activity-toast-title">${item.title}</span>
-                <span class="activity-toast-body">${item.body}</span>
-                <span class="activity-toast-time">${item.time}</span>
-            </div>
-        `;
-
-        container.appendChild(toast);
-        
-        // Initialize Lucide icons inside toast
-        if (window.lucide) {
-            window.lucide.createIcons({
-                attrs: {
-                    class: 'lucide'
-                },
-                nameAttr: 'data-lucide'
-            });
-        }
-
-        // Trigger transition
-        setTimeout(() => {
-            toast.classList.add("show");
-        }, 100);
-
-        // Hide after 7 seconds
-        setTimeout(() => {
-            toast.classList.remove("show");
-        }, 7000);
-    }
-
-    // Show first toast after 8 seconds, then repeat every 30 seconds
-    setTimeout(() => {
-        showNextToast();
-        setInterval(showNextToast, 30000);
-    }, 8000);
+    section.addEventListener("focusin", stopTimer);
+    section.addEventListener("focusout", (event) => {
+        if (!section.contains(event.relatedTarget)) startTimer();
+    });
 }
 

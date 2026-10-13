@@ -1919,3 +1919,6 @@ textarea {
     border-color: var(--accent-gold) !important;
     box-shadow: 0 0 10px rgba(197, 160, 89, 0.35);
 }
+
+.catalog-storage-note { max-width: 600px; margin-top: 8px; padding: 9px 12px; color: var(--text-secondary); background: rgba(197, 160, 89, .07); border-left: 2px solid var(--accent-gold); font-size: 11px !important; line-height: 1.6; }
+.catalog-storage-note strong { color: var(--accent-gold); }

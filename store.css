@@ -2597,3 +2597,36 @@ body { background: var(--bg-primary); }
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+
+/* Trust, live-price disclosure, and accessible interaction details. */
+.currency-toggle-wrapper { position: relative; padding-bottom: 13px; }
+.exchange-rate-note { position: absolute; bottom: -2px; left: 0; white-space: nowrap; color: #aab1a7; font-size: 8px; letter-spacing: .02em; }
+.hero-stat-item { min-width: 0; }
+.hero-stat-item .stat-number { color: #dec68f; font-family: var(--font-sub); font-size: 13px; font-weight: 600; letter-spacing: .04em; }
+.hero-stat-item .stat-label { margin-top: 4px; }
+.card-image-wrapper { cursor: default; }
+.card-image-wrapper .overlay-btn, .card-footer .card-btn { cursor: pointer; }
+.carousel-dots .dot { padding: 0; border: 0; appearance: none; }
+.modal-availability-note { margin: 0 0 22px; padding: 12px 14px; color: var(--text-secondary); background: rgba(255,255,255,.035); border-left: 2px solid var(--accent-gold); font-size: 12px; line-height: 1.6; }
+.modal-container:focus { outline: none; }
+.modal-thumb { cursor: pointer; }
+.modal-thumb[aria-current="true"] { outline: 2px solid var(--accent-gold); outline-offset: 2px; }
+.exchange-rate-note { color: #b6bbae; }
+@media (max-width: 768px) {
+    .currency-toggle-wrapper { padding-bottom: 13px; }
+    .exchange-rate-note { font-size: 7px; }
+    .hero-stat-item .stat-number { font-size: 10px; }
+}
+
+.card-image-wrapper:focus-within .card-img-overlay { opacity: 1; }
+.card-image-wrapper:focus-within .overlay-btn { transform: translateY(0); }
+.watch-card { cursor: default; }
+.modal-thumb { appearance: none; padding: 0; color: inherit; }
+
+.modal-overlay { visibility: hidden; transition: opacity .4s var(--transition-curve), visibility 0s linear .4s; }
+.modal-overlay.active { visibility: visible; transition-delay: 0s; }
+
+.hero-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 768px) { .hero-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .hero-stats { display: grid; } }

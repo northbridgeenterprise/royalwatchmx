@@ -52,10 +52,11 @@
                 <!-- Currency Switcher -->
                 <div class="currency-toggle-wrapper">
                     <span class="toggle-label">Moneda:</span>
-                    <div class="currency-switch" id="currency-switch">
-                        <button class="currency-btn" data-currency="USD">USD</button>
-                        <button class="currency-btn active" data-currency="MXN">MXN</button>
+                    <div class="currency-switch" id="currency-switch" role="group" aria-label="Moneda de precios">
+                        <button type="button" class="currency-btn" data-currency="USD" aria-pressed="false">USD</button>
+                        <button type="button" class="currency-btn active" data-currency="MXN" aria-pressed="true">MXN</button>
                     </div>
+                    <span class="exchange-rate-note">MXN referencial · $17.80 por USD</span>
                 </div>
             </div>
         </div>
@@ -132,30 +133,18 @@
         <button class="carousel-control next" id="hero-next" aria-label="Siguiente slide"><i data-lucide="chevron-right"></i></button>
 
         <!-- Carousel Indicators (Dots) -->
-        <div class="carousel-dots" id="hero-dots">
-            <span class="dot active" data-slide="0"></span>
-            <span class="dot" data-slide="1"></span>
-            <span class="dot" data-slide="2"></span>
+        <div class="carousel-dots" id="hero-dots" role="group" aria-label="Elegir diapositiva">
+            <button type="button" class="dot active" data-slide="0" aria-label="Mostrar diapositiva 1" aria-pressed="true"></button>
+            <button type="button" class="dot" data-slide="1" aria-label="Mostrar diapositiva 2" aria-pressed="false"></button>
+            <button type="button" class="dot" data-slide="2" aria-label="Mostrar diapositiva 3" aria-pressed="false"></button>
         </div>
 
-        <!-- Stats Bar -->
-        <div class="hero-stats">
-            <div class="hero-stat-item">
-                <span class="stat-number" data-target="500" id="stat-relojes">0</span>
-                <span class="stat-label">Relojes Vendidos</span>
-            </div>
-            <div class="hero-stat-item">
-                <span class="stat-number" id="stat-marcas">20+</span>
-                <span class="stat-label">Marcas de Lujo</span>
-            </div>
-            <div class="hero-stat-item">
-                <span class="stat-number" data-target="100" id="stat-autenticidad">0</span>
-                <span class="stat-label">% Auténticos</span>
-            </div>
-            <div class="hero-stat-item">
-                <span class="stat-number" data-target="10" id="stat-anos">0</span>
-                <span class="stat-label">Años de Experiencia</span>
-            </div>
+        <!-- Service highlights -->
+        <div class="hero-stats" role="group" aria-label="Servicios de Royal Watch MTY">
+            <div class="hero-stat-item"><span class="stat-number">Compra &amp; venta</span><span class="stat-label">Piezas seleccionadas</span></div>
+            <div class="hero-stat-item"><span class="stat-number">Consignación</span><span class="stat-label">Acompañamiento personal</span></div>
+            <div class="hero-stat-item"><span class="stat-number">Búsqueda global</span><span class="stat-label">Referencias bajo pedido</span></div>
+            <div class="hero-stat-item"><span class="stat-number">Monterrey</span><span class="stat-label">Showroom con cita</span></div>
         </div>
     </section>
 
@@ -219,21 +208,21 @@
                 <div class="brands-filter-row">
                     <span class="filter-title">Filtrar por Marca:</span>
                     <div class="brand-tags-container" id="brand-tags-container">
-                        <button class="brand-tag active" data-brand="Todos">Todos</button>
-                        <button class="brand-tag" data-brand="Rolex">Rolex</button>
-                        <button class="brand-tag" data-brand="Audemars Piguet">Audemars Piguet</button>
-                        <button class="brand-tag" data-brand="Patek Philippe">Patek Philippe</button>
-                        <button class="brand-tag" data-brand="Cartier">Cartier</button>
-                        <button class="brand-tag" data-brand="Omega">Omega</button>
-                        <button class="brand-tag" data-brand="Tag Heuer">Tag Heuer</button>
-                        <button class="brand-tag" data-brand="Otros">Otras Marcas</button>
+                        <button type="button" class="brand-tag active" data-brand="Todos" aria-pressed="true">Todos</button>
+                        <button type="button" class="brand-tag" data-brand="Rolex" aria-pressed="false">Rolex</button>
+                        <button type="button" class="brand-tag" data-brand="Audemars Piguet" aria-pressed="false">Audemars Piguet</button>
+                        <button type="button" class="brand-tag" data-brand="Patek Philippe" aria-pressed="false">Patek Philippe</button>
+                        <button type="button" class="brand-tag" data-brand="Cartier" aria-pressed="false">Cartier</button>
+                        <button type="button" class="brand-tag" data-brand="Omega" aria-pressed="false">Omega</button>
+                        <button type="button" class="brand-tag" data-brand="Tag Heuer" aria-pressed="false">Tag Heuer</button>
+                        <button type="button" class="brand-tag" data-brand="Otros" aria-pressed="false">Otras Marcas</button>
                     </div>
                 </div>
             </div>
 
             <!-- Inventory Counter -->
             <div class="catalog-info-bar">
-                <span>Mostrando <strong id="catalog-count">0</strong> piezas en catálogo</span>
+                <span aria-live="polite" aria-atomic="true">Mostrando <strong id="catalog-count">0</strong> piezas en catálogo</span>
             </div>
 
             <!-- Products Grid -->
@@ -344,18 +333,18 @@
     </div>
 
     <!-- Lightbox Modal for Product Details -->
-    <div class="modal-overlay" id="product-modal">
-        <div class="modal-container">
-            <button class="modal-close-btn" id="modal-close"><i data-lucide="x"></i></button>
+    <div class="modal-overlay" id="product-modal" aria-hidden="true">
+        <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="modal-model" tabindex="-1">
+            <button type="button" class="modal-close-btn" id="modal-close" aria-label="Cerrar detalles de la pieza"><i data-lucide="x"></i></button>
             <div class="modal-content-grid">
                 <!-- Image Column -->
                 <div class="modal-image-col">
                     <div class="modal-img-main-wrapper">
-                        <button class="modal-gallery-arrow prev" id="modal-gallery-prev" aria-label="Foto anterior"><i data-lucide="chevron-left"></i></button>
+                        <button type="button" class="modal-gallery-arrow prev" id="modal-gallery-prev" aria-label="Foto anterior"><i data-lucide="chevron-left"></i></button>
                         <div class="modal-img-viewport">
                             <img src="" alt="Reloj" class="modal-main-img" id="modal-img">
                         </div>
-                        <button class="modal-gallery-arrow next" id="modal-gallery-next" aria-label="Siguiente foto"><i data-lucide="chevron-right"></i></button>
+                        <button type="button" class="modal-gallery-arrow next" id="modal-gallery-next" aria-label="Siguiente foto"><i data-lucide="chevron-right"></i></button>
                     </div>
                     <!-- Gallery Thumbnails -->
                     <div class="modal-thumbnails-wrapper" id="modal-thumbnails-wrapper">
@@ -375,7 +364,7 @@
                         <span class="price-label" id="modal-price-label">Inversión Especial</span>
                         <div class="modal-price-container">
                             <span class="modal-price-original" id="modal-price-original" style="display: none;"></span>
-                            <span class="modal-price-value" id="modal-price">$14,500 USD</span>
+                            <span class="modal-price-value" id="modal-price">—</span>
                         </div>
                     </div>
 
@@ -406,17 +395,7 @@
                         </table>
                     </div>
 
-                    <!-- Urgency Indicators -->
-                    <div class="modal-urgency-box" id="modal-urgency-box">
-                        <div class="urgency-item viewers-count">
-                            <span class="pulse-dot"></span>
-                            <span id="modal-urgency-viewers">🔥 8 coleccionistas están evaluando esta pieza ahora mismo.</span>
-                        </div>
-                        <div class="urgency-item stock-alert">
-                            <i data-lucide="alert-triangle" class="urgency-icon-alert"></i>
-                            <span>⚡ ¡Pieza única disponible! Entrega inmediata en MTY.</span>
-                        </div>
-                    </div>
+                    <p class="modal-availability-note" id="modal-availability-note" aria-live="polite">Confirma disponibilidad y precio con nuestro equipo.</p>
 
                     <!-- WhatsApp Action -->
                     <div class="modal-action-box">

@@ -111,6 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Load data
 function loadInitialData() {
+    migrateStoredCatalogPrices();
     // Custom products and deleted list
     const customProds = JSON.parse(localStorage.getItem("rw_custom_products") || "[]");
     const deletedRefs = JSON.parse(localStorage.getItem("rw_deleted_products") || "[]");
@@ -452,7 +453,7 @@ function renderProductsTable(filter = "") {
             <td style="font-weight: 700; color: var(--accent-gold);">${p.marca}</td>
             <td><strong>${p.modelo}</strong><br><span style="font-family: monospace; font-size: 11px; color: var(--text-muted);">${p.referencia || 'S/R'}</span></td>
             <td>${p.medida || '-'} / ${p.material || '-'}</td>
-            <td style="font-weight: 600;">$ ${p.precio.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD</td>
+            <td style="font-weight: 600;">$ ${p.precio.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN</td>
             <td>
                 <select class="prod-status-select ${statusClass}" onchange="changeProductStatus(${actualIdx}, this.value)">
                     <option value="Disponible" ${currentStatus === "Disponible" ? "selected" : ""}>Disponible</option>
@@ -1077,7 +1078,7 @@ function showAutocompletePanel(inputEl, onSelect) {
                         ${item.referencia ? `<br><span class="suggestion-ref" style="font-family: monospace; font-size: 10px; color: var(--text-muted);">${item.referencia}</span>` : ""}
                     </div>
                 </div>
-                <div class="suggestion-price" style="font-weight: bold; color: var(--accent-gold); white-space: nowrap;">$${item.precio.toLocaleString()} USD</div>
+                <div class="suggestion-price" style="font-weight: bold; color: var(--accent-gold); white-space: nowrap;">$${item.precio.toLocaleString()} MXN</div>
             `;
             row.addEventListener("click", () => {
                 onSelect(item);
