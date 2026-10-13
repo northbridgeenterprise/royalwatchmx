@@ -2737,4 +2737,13 @@ body { background: var(--bg-primary); }
 .modal-img-main-wrapper { touch-action: pan-y; }
 @media (max-width: 480px) {
     .modal-container { padding: 22px 16px 20px !important; }
+}#modal-img { cursor: zoom-in; }
+.modal-process { counter-reset: modalstep; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0 0 18px; padding: 14px 0 0; border-top: 1px solid rgba(255,255,255,.09); list-style: none; }
+.modal-process li { counter-increment: modalstep; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.modal-process li::before { color: #cbb47e; content: "0" counter(modalstep); font: 600 9px/1 var(--font-sub); letter-spacing: .11em; }
+.modal-process strong { color: #e8e3d5; font: 600 10px/1.2 var(--font-sub); letter-spacing: .04em; }
+.modal-process li span { color: #aab2a8; font: 400 9px/1.4 var(--font-sans); }
+@media (max-width: 480px) {
+    .modal-process { gap: 7px; padding-top: 12px; }
+    .modal-process li span { font-size: 8px; }
 }

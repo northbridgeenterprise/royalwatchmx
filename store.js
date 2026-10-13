@@ -93,7 +93,6 @@ function getWatchPricing(watch, date = new Date()) {
         price: septemberOffer ? Math.round(listedPrice * 0.9) : listedPrice,
         referencePrice: septemberOffer ? listedPrice : (Number(watch?.precioAnterior) || null),
         septemberOffer,
-        extraDiscount: septemberOffer ? 10 : 0
     };
 }
 
@@ -363,6 +362,8 @@ function setupModalEvents() {
     }
 
     closeBtn.addEventListener("click", closeModal);
+    const mainImage = document.getElementById("modal-img");
+    mainImage.addEventListener("click", openModalZoom);
     zoomOpenBtn.addEventListener("click", openModalZoom);
     zoomCloseBtn.addEventListener("click", closeModalZoom);
     zoomPrevBtn.addEventListener("click", () => changeModalImage((modalImgIndex - 1 + modalImages.length) % modalImages.length));
@@ -427,7 +428,13 @@ function setupModalEvents() {
         const priceText = formatPrice(pricing.price);
         const promoText = pricing.septemberOffer ? " Incluye el 10% de descuento de septiembre." : "";
         const currentStatus = selectedWatch.status || "Disponible";
-        const intent = currentStatus === "Vendido" ? "¿Podrían ayudarme a encontrar una pieza similar?" : "¿Me confirman existencia, condición y opciones de entrega?";
+        const intents = {
+            "Disponible": "¿Me confirman existencia, condición y opciones de entrega?",
+            "Consignado": "¿Me confirman si sigue disponible y cómo puedo conocerlo?",
+            "Apartado": "¿Tienen alguna pieza similar disponible?",
+            "Vendido": "¿Podrían ayudarme a encontrar una pieza similar?"
+        };
+        const intent = intents[currentStatus] || intents["Disponible"];
         const msg = `Hola, me interesa el reloj *${selectedWatch.marca} ${selectedWatch.modelo}* (Ref: *${selectedWatch.referencia || 'S/R'}*). Precio mostrado: *${priceText}*.${promoText} ${intent}`;
         const waUrl = `https://api.whatsapp.com/send?phone=528121980008&text=${encodeURIComponent(msg)}`;
         window.open(waUrl, "_blank", "noopener,noreferrer");
@@ -680,7 +687,13 @@ function openModalDetails(watch) {
         availabilityNote.textContent = notes[currentStatus] || "Consulta con nuestro equipo el estado actual de esta pieza.";
     }
     const waLabel = document.getElementById("modal-btn-wa-label");
-    if (waLabel) waLabel.textContent = currentStatus === "Vendido" ? "Buscar una pieza similar" : "Consultar por WhatsApp";
+    const waLabels = {
+        "Disponible": "Consultar disponibilidad",
+        "Consignado": "Confirmar disponibilidad",
+        "Apartado": "Ver piezas similares",
+        "Vendido": "Buscar una pieza similar"
+    };
+    if (waLabel) waLabel.textContent = waLabels[currentStatus] || waLabels["Disponible"];
 
     modal.classList.add("active");
     modal.setAttribute("aria-hidden", "false");
