@@ -8,7 +8,8 @@ let searchQuery = "";
 let activeSort = "default";
 let selectedWatch = null;
 let modalImages = [];
-let modalImgIndex = 0;`r`nlet modalSwipeStartX = null;
+let modalImgIndex = 0;
+let modalSwipeStartX = null;
 let modalReturnFocus = null;
 
 // ========================
