@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Royal Watch MTY | Luxury Watch Boutique — Monterrey</title>
-    <meta name="description" content="Boutique especializada en compra, venta y consignación de relojes de lujo: Rolex, Patek Philippe, Audemars Piguet, Cartier y más. Autenticidad certificada. San Pedro Garza García, N.L.">
+    <meta name="description" content="Compra, venta y consignación de relojes de lujo en Monterrey. Descubre piezas seleccionadas de Rolex, Cartier, Omega y más en Royal Watch MTY.">
+    <meta name="theme-color" content="#10221d">
+    <meta property="og:title" content="Royal Watch MTY | Relojes de colección">
+    <meta property="og:description" content="Relojes excepcionales, seleccionados para acompañarte toda la vida.">
+    <meta property="og:type" content="website">
     <link rel="stylesheet" href="store.css">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,16 +19,11 @@
 </head>
 <body>
 
-    <!-- Top Promo Bar with Countdown -->
+    <!-- Boutique announcement -->
     <div class="promo-bar" id="promo-bar">
         <div class="promo-bar-content">
-            <span class="promo-bar-text">🎁 <strong>Especial del Mes de Julio:</strong> Inversión con bonificación de hasta 20% en piezas selectas. Termina en:</span>
-            <div class="countdown-timer" id="countdown-timer">
-                <span class="timer-segment"><strong id="timer-days">00</strong>d</span>
-                <span class="timer-segment"><strong id="timer-hours">00</strong>h</span>
-                <span class="timer-segment"><strong id="timer-mins">00</strong>m</span>
-                <span class="timer-segment"><strong id="timer-secs">00</strong>s</span>
-            </div>
+            <span class="promo-bar-text"><span class="announcement-mark" aria-hidden="true"></span> Showroom privado en San Pedro · Atención con cita</span>
+            <a class="announcement-link" href="https://api.whatsapp.com/send?phone=528121980008&amp;text=Hola,%20me%20gustaría%20agendar%20una%20cita." target="_blank" rel="noopener noreferrer">Agenda tu visita <span aria-hidden="true">↗</span></a>
         </div>
     </div>
 
@@ -40,11 +39,13 @@
             </a>
 
             <!-- Navigation Menu -->
-            <nav class="store-nav">
+            <nav class="store-nav" aria-label="Navegación principal">
                 <a href="#catalogo" class="nav-link">Catálogo</a>
                 <a href="#nosotros" class="nav-link">Nosotros</a>
                 <a href="#contacto" class="nav-link">Contacto</a>
             </nav>
+
+            <a class="header-appointment" href="https://api.whatsapp.com/send?phone=528121980008&amp;text=Hola,%20quiero%20agendar%20una%20cita." target="_blank" rel="noopener noreferrer">Agendar cita <span aria-hidden="true">↗</span></a>
 
             <!-- Quick Settings -->
             <div class="header-settings">
@@ -73,16 +74,16 @@
             <div class="carousel-slide active" style="background-image: linear-gradient(rgba(5, 5, 10, 0.45), rgba(5, 5, 10, 0.9)), url('relojes/Rolex_GMT-Master_II_Bruce_Wayne_Diagonal_2220.jpg');">
                 <div class="hero-content">
                     <span class="hero-tagline">Colección Exclusiva</span>
-                    <h2 class="hero-title">Alta Relojería &<br>Piezas de Colección</h2>
-                    <p class="hero-subtitle">Boutique especializada en compra, venta y consignación de las marcas de relojes más prestigiosas del mundo. Autenticidad garantizada de por vida.</p>
+                    <h2 class="hero-title">Relojes excepcionales.<br><em>Historias para siempre.</em></h2>
+                    <p class="hero-subtitle">Una selección curada de piezas extraordinarias, con asesoría personal y la confianza de un trato directo en Monterrey.</p>
                     <div class="hero-actions">
                         <a href="#catalogo" class="btn-hero btn-gold">
                             <i data-lucide="grid" style="width:14px;height:14px;"></i>
-                            Explorar Catálogo
+                            Descubrir la colección
                         </a>
                         <a href="#contacto" class="btn-hero btn-outline">
                             <i data-lucide="calendar" style="width:14px;height:14px;"></i>
-                            Agendar Cita
+                            Hablar con un asesor
                         </a>
                     </div>
                 </div>
@@ -95,7 +96,7 @@
                     <h2 class="hero-title">Sourcing Express<br>Bajo Pedido</h2>
                     <p class="hero-subtitle">¿Buscas una pieza específica? La conseguimos de inmediato mediante nuestra red internacional en tiempo récord con seguridad absoluta.</p>
                     <div class="hero-actions">
-                        <a href="https://api.whatsapp.com/send?phone=528121980008&text=Hola,%20busco%20ayuda%20para%20conseguir%20un%20reloj%20específico." target="_blank" class="btn-hero btn-gold">
+                        <a href="https://api.whatsapp.com/send?phone=528121980008&text=Hola,%20busco%20ayuda%20para%20conseguir%20un%20reloj%20específico." target="_blank" rel="noopener noreferrer" class="btn-hero btn-gold">
                             <i data-lucide="search" style="width:14px;height:14px;"></i>
                             Solicitar Reloj
                         </a>
@@ -113,7 +114,7 @@
                     <h2 class="hero-title">Pago Contra Entrega<br>& Envíos Asegurados</h2>
                     <p class="hero-subtitle">Entregas seguras con pago al recibir en Monterrey, Nuevo León. Envíos express blindados a nivel nacional a través de DHL Express.</p>
                     <div class="hero-actions">
-                        <a href="https://api.whatsapp.com/send?phone=528121980008&text=Hola,%20me%20gustaría%20saber%20más%20sobre%20los%20métodos%20de%20entrega." target="_blank" class="btn-hero btn-gold">
+                        <a href="https://api.whatsapp.com/send?phone=528121980008&text=Hola,%20me%20gustaría%20saber%20más%20sobre%20los%20métodos%20de%20entrega." target="_blank" rel="noopener noreferrer" class="btn-hero btn-gold">
                             <i data-lucide="message-circle" style="width:14px;height:14px;"></i>
                             Consultar Entregas
                         </a>
@@ -189,9 +190,10 @@
     <section class="catalog-section" id="catalogo">
         <div class="catalog-container">
             <div class="section-title-wrapper reveal">
-                <h3 class="section-title">Nuestras Piezas Disponibles</h3>
+                <span class="catalog-kicker">Selección actual</span>
+                <h3 class="section-title">Piezas con carácter.<br>Elegidas para perdurar.</h3>
                 <div class="gold-line"></div>
-                <p class="section-subtitle">Explora nuestro inventario en stock. Cada pieza ha sido inspeccionada minuciosamente por nuestros expertos relojeros.</p>
+                <p class="section-subtitle">Explora el inventario disponible. Si buscas una referencia especial, nuestro equipo puede ayudarte a encontrarla.</p>
             </div>
 
             <!-- Search & Filters -->
@@ -200,7 +202,7 @@
                 <div class="filters-row-main">
                     <div class="search-box-wrapper">
                         <i data-lucide="search" class="search-icon"></i>
-                        <input type="text" id="store-search" placeholder="Buscar Rolex, Submariner, Daytona, Cartier...">
+                        <input type="search" id="store-search" aria-label="Buscar relojes por marca, modelo o referencia" placeholder="Busca una marca, modelo o referencia...">
                     </div>
                     <div class="sort-box-wrapper">
                         <label for="store-sort">Ordenar por:</label>
@@ -252,9 +254,9 @@
                 </div>
                 <div class="about-text-side reveal">
                     <span class="sub-tag">Sobre Nosotros</span>
-                    <h3>Tu Socio de Confianza en Alta Relojería</h3>
-                    <p>En <strong>Royal Watch MTY</strong> no solo vendemos relojes; somos brókeres profesionales especializados en conectar a coleccionistas exigentes con las piezas más exclusivas del mundo. Operamos bajo estrictos estándares de confidencialidad, honestidad y seguridad.</p>
-                    <p>Nuestra especialidad es el <strong>Sourcing Internacional</strong>: si buscas una referencia descontinuada, una edición limitada o el modelo más reciente del mercado, nuestro equipo lo localiza y lo trae para ti de forma rápida e inmediata.</p>
+                    <h3>El valor de una pieza está en cómo llega a tus manos.</h3>
+                    <p>En <strong>Royal Watch MTY</strong> conectamos a coleccionistas con relojes que merecen ser encontrados. Cada conversación comienza escuchando qué buscas y continúa con atención personal, discreta y directa.</p>
+                    <p>¿Tienes una referencia en mente? La buscamos a través de nuestra red internacional y te acompañamos durante todo el proceso, desde la selección hasta la entrega.</p>
                 </div>
             </div>
 
@@ -313,7 +315,7 @@
                 </div>
                 <div class="footer-contact">
                     <h5>Contacto Directo</h5>
-                    <a href="https://api.whatsapp.com/send?phone=528121980008" target="_blank" class="contact-btn wa-btn">
+                    <a href="https://api.whatsapp.com/send?phone=528121980008" target="_blank" rel="noopener noreferrer" class="contact-btn wa-btn">
                         <i data-lucide="message-circle"></i> Escríbenos en WhatsApp
                     </a>
                     <p class="tel-number"><i data-lucide="phone"></i> 81 2198 0008</p>

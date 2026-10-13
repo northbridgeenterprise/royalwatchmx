@@ -34,7 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
     animateCounters();
     initHeroCarousel();
     initLiveActivityToasts();
-    initPromoCountdown();
 });
 
 // ========================
@@ -866,46 +865,5 @@ function initLiveActivityToasts() {
         showNextToast();
         setInterval(showNextToast, 30000);
     }, 8000);
-}
-
-// ========================
-// PROMO COUNTDOWN
-// ========================
-function initPromoCountdown() {
-    // Set target date for July Promo: July 31, 2026 23:59:59
-    const targetDate = new Date("July 31, 2026 23:59:59").getTime();
-
-    function updateCountdown() {
-        const now = new Date().getTime();
-        const distance = targetDate - now;
-
-        if (distance < 0) {
-            clearInterval(timerInterval);
-            const countdownEl = document.getElementById("countdown-timer");
-            if (countdownEl) {
-                countdownEl.innerHTML = "<span class='timer-segment' style='min-width: 120px;'>¡Oferta Finalizada!</span>";
-            }
-            return;
-        }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        const daysEl = document.getElementById("timer-days");
-        const hoursEl = document.getElementById("timer-hours");
-        const minsEl = document.getElementById("timer-mins");
-        const secsEl = document.getElementById("timer-secs");
-
-        if (daysEl) daysEl.textContent = String(days).padStart(2, "0");
-        if (hoursEl) hoursEl.textContent = String(hours).padStart(2, "0");
-        if (minsEl) minsEl.textContent = String(minutes).padStart(2, "0");
-        if (secsEl) secsEl.textContent = String(seconds).padStart(2, "0");
-    }
-
-    // Run immediately
-    updateCountdown();
-    const timerInterval = setInterval(updateCountdown, 1000);
 }
 
