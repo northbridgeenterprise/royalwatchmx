@@ -6,6 +6,9 @@ const EXCHANGE_RATE = 17.80;
 let activeBrandFilter = "Todos";
 let searchQuery = "";
 let activeSort = "default";
+let activeStatusFilter = "Todos";
+let activeSizeFilter = "";
+let activePriceBand = "";
 let selectedWatch = null;
 let modalImages = [];
 let modalImgIndex = 0;
@@ -293,25 +296,82 @@ function setupStoreFilters() {
     const sortSelect = document.getElementById("store-sort");
     const brandTags = document.querySelectorAll(".brand-tag");
 
-    searchInput.addEventListener("input", (e) => {
-        searchQuery = e.target.value.trim().toLowerCase();
+    if (searchInput) searchInput.addEventListener("input", (event) => {
+        searchQuery = event.target.value.trim().toLowerCase();
         renderStoreGrid();
     });
-
-    sortSelect.addEventListener("change", (e) => {
-        activeSort = e.target.value;
+    if (sortSelect) sortSelect.addEventListener("change", (event) => {
+        activeSort = event.target.value;
         renderStoreGrid();
     });
+    brandTags.forEach((tag) => tag.addEventListener("click", () => {
+        brandTags.forEach((button) => {
+            const selected = button === tag;
+            button.classList.toggle("active", selected);
+            button.setAttribute("aria-pressed", String(selected));
+        });
+        activeBrandFilter = tag.getAttribute("data-brand") || "Todos";
+        renderStoreGrid();
+    }));
 
-    brandTags.forEach(tag => {
-        tag.addEventListener("click", () => {
-            brandTags.forEach(t => t.classList.remove("active"));
-            tag.classList.add("active");
-            brandTags.forEach(button => button.setAttribute("aria-pressed", String(button === tag)));
-            activeBrandFilter = tag.getAttribute("data-brand");
+    [
+        ["price-band", (value) => { activePriceBand = value; }],
+        ["status-filter", (value) => { activeStatusFilter = value || "Todos"; }],
+        ["size-filter", (value) => { activeSizeFilter = value; }],
+    ].forEach(([id, update]) => {
+        const control = document.getElementById(id);
+        if (control) control.addEventListener("change", (event) => {
+            update(event.target.value);
             renderStoreGrid();
         });
     });
+    const clearButton = document.getElementById("clear-filters");
+    if (clearButton) clearButton.addEventListener("click", resetStoreFilters);
+    updatePriceBandLabels();
+}
+
+function updatePriceBandLabels() {
+    const select = document.getElementById("price-band");
+    const currencyLabel = document.getElementById("price-filter-currency");
+    if (currencyLabel) currencyLabel.textContent = activeCurrency;
+    if (!select) return;
+    const labels = [
+        ["", "Cualquier precio"],
+        ["0:6500", `Menos de ${formatPrice(6500)}`],
+        ["6500:7000", `${formatPrice(6500)} – ${formatPrice(7000)}`],
+        ["7000:7200", `${formatPrice(7000)} – ${formatPrice(7200)}`],
+        ["7200:7400", `${formatPrice(7200)} – ${formatPrice(7400)}`],
+        ["7400:7800", `${formatPrice(7400)} – ${formatPrice(7800)}`],
+        ["7800:", `Desde ${formatPrice(7800)}`],
+    ];
+    [...select.options].forEach((option, index) => {
+        if (labels[index]) option.textContent = labels[index][1];
+    });
+}
+
+function resetStoreFilters() {
+    searchQuery = "";
+    activeBrandFilter = "Todos";
+    activeSort = "default";
+    activeStatusFilter = "Todos";
+    activeSizeFilter = "";
+    activePriceBand = "";
+    const searchInput = document.getElementById("store-search");
+    const sortSelect = document.getElementById("store-sort");
+    const priceSelect = document.getElementById("price-band");
+    const statusSelect = document.getElementById("status-filter");
+    const sizeSelect = document.getElementById("size-filter");
+    if (searchInput) searchInput.value = "";
+    if (sortSelect) sortSelect.value = "default";
+    if (priceSelect) priceSelect.value = "";
+    if (statusSelect) statusSelect.value = "Todos";
+    if (sizeSelect) sizeSelect.value = "";
+    document.querySelectorAll(".brand-tag").forEach((button) => {
+        const selected = button.getAttribute("data-brand") === "Todos";
+        button.classList.toggle("active", selected);
+        button.setAttribute("aria-pressed", String(selected));
+    });
+    renderStoreGrid();
 }
 
 // ========================
@@ -327,6 +387,7 @@ function setupCurrencySwitcher() {
             btn.classList.add("active");
             buttons.forEach(button => button.setAttribute("aria-pressed", String(button === btn)));
             activeCurrency = btn.getAttribute("data-currency");
+            updatePriceBandLabels();
             renderStoreGrid();
         });
     });
@@ -445,6 +506,20 @@ function setupModalEvents() {
 // ========================
 // RENDER PRODUCTS GRID
 // ========================
+function updateAdvancedFilterSummary() {
+    const badge = document.getElementById("filters-active-count");
+    if (!badge) return;
+    const activeCount = Number(activeBrandFilter !== "Todos") + Number(Boolean(searchQuery)) + Number(Boolean(activePriceBand)) + Number(activeStatusFilter !== "Todos") + Number(Boolean(activeSizeFilter));
+    badge.textContent = String(activeCount);
+    badge.hidden = activeCount === 0;
+}
+
+function createWatchSlug(watch) {
+    return [watch.marca, watch.modelo, watch.referencia || "sin-referencia"]
+        .join(" ")
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
 function renderStoreGrid() {
     const grid = document.getElementById("store-grid");
     const countSpan = document.getElementById("catalog-count");
@@ -468,8 +543,27 @@ function renderStoreGrid() {
                          (p.referencia || "").toLowerCase().includes(searchQuery) ||
                          (p.material || "").toLowerCase().includes(searchQuery);
         }
-        return brandMatch && queryMatch;
+        const statusMatch = activeStatusFilter === "Todos" || String(p.status || "Disponible").toLowerCase() === activeStatusFilter.toLowerCase();
+        let priceMatch = true;
+        if (activePriceBand) {
+            const [minText, maxText] = activePriceBand.split(":");
+            const price = getWatchPricing(p).price;
+            const min = minText ? Number(minText) : 0;
+            const max = maxText ? Number(maxText) : Infinity;
+            priceMatch = price >= min && price < max;
+        }
+        let sizeMatch = true;
+        if (activeSizeFilter) {
+            const size = parseFloat(String(p.medida || "").replace(",", "."));
+            if (!Number.isFinite(size)) sizeMatch = false;
+            else if (activeSizeFilter === "under40") sizeMatch = size < 40;
+            else if (activeSizeFilter === "40-42") sizeMatch = size >= 40 && size < 43;
+            else if (activeSizeFilter === "43plus") sizeMatch = size >= 43;
+        }
+        return brandMatch && queryMatch && statusMatch && priceMatch && sizeMatch;
     });
+
+    updateAdvancedFilterSummary();
 
     // 2. Sort
     if (activeSort === "price-asc") filtered.sort((a, b) => getWatchPricing(a).price - getWatchPricing(b).price);
@@ -484,9 +578,11 @@ function renderStoreGrid() {
             <div class="empty-catalog-msg">
                 <i data-lucide="search-x"></i>
                 <h4>Sin Resultados</h4>
-                <p>No se encontraron piezas que coincidan con la búsqueda o filtros seleccionados.</p>
+                <p>No se encontraron piezas con esa combinación. Prueba otro filtro o vuelve a ver todo el catálogo.</p>
+                <button type="button" class="clear-filters-btn" data-reset-store-filters>Ver todo el catálogo</button>
             </div>
         `;
+        grid.querySelector("[data-reset-store-filters]")?.addEventListener("click", resetStoreFilters);
         initIcons();
         return;
     }
@@ -508,6 +604,7 @@ function renderStoreGrid() {
         priceHTML += `<span class="card-price${pricing.septemberOffer ? ' card-price-seasonal' : ''}">${escapeHTML(formatPrice(pricing.price))}</span>`;
 
         const imgPath = escapeHTML(safeCatalogImage(p.imagen));
+        const detailHref = `reloj.html?pieza=${encodeURIComponent(createWatchSlug(p))}`;
         const brand = escapeHTML(p.marca);
         const model = escapeHTML(p.modelo);
         const reference = escapeHTML(p.referencia || "S/R");
@@ -522,7 +619,7 @@ function renderStoreGrid() {
                 ${pricing.septemberOffer ? '<span class="card-seasonal-label">10% menos · septiembre</span>' : ''}
                 <img src="${imgPath}" alt="${brand} ${model}" class="card-img" loading="lazy">
                 <div class="card-img-overlay">
-                    <button type="button" class="overlay-btn" aria-label="Ver detalles de ${brand} ${model}">Ver Pieza</button>
+                    <button type="button" class="overlay-btn" aria-label="Abrir vista rápida de ${brand} ${model}">Vista rápida</button>
                 </div>
             </div>
             <div class="card-info">
@@ -536,14 +633,13 @@ function renderStoreGrid() {
                 </div>
                 <div class="card-footer">
                     <div style="display:flex; align-items:baseline;">${priceHTML}</div>
-                    <button type="button" class="card-btn" aria-label="Ver detalles de ${brand} ${model}">Ver Detalles</button>
+                    <a class="card-btn" href="${detailHref}" aria-label="Ver ficha completa de ${brand} ${model}">Ficha completa <span aria-hidden="true">↗</span></a>
                 </div>
             </div>
         `;
 
-        card.querySelectorAll(".overlay-btn, .card-btn").forEach(button => {
-            button.addEventListener("click", () => openModalDetails(p));
-        });
+        const quickViewButton = card.querySelector(".overlay-btn");
+        if (quickViewButton) quickViewButton.addEventListener("click", () => openModalDetails(p));
         grid.appendChild(card);
     });
 

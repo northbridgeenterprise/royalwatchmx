@@ -218,6 +218,44 @@
                         <button type="button" class="brand-tag" data-brand="Otros" aria-pressed="false">Otras Marcas</button>
                     </div>
                 </div>
+                <details class="advanced-filters">
+                    <summary><span>Más filtros</span><span class="filter-count" id="filters-active-count" hidden>0</span></summary>
+                    <div class="advanced-filter-grid">
+                        <label class="advanced-filter-control" for="price-band">
+                            <span>Rango de precio <small id="price-filter-currency">MXN</small></span>
+                            <select id="price-band">
+                                <option value="">Cualquier precio</option>
+                                <option value="0:6500">Menos de $6,500</option>
+                                <option value="6500:7000">$6,500 – $7,000</option>
+                                <option value="7000:7200">$7,000 – $7,200</option>
+                                <option value="7200:7400">$7,200 – $7,400</option>
+                                <option value="7400:7800">$7,400 – $7,800</option>
+                                <option value="7800:">Desde $7,800</option>
+                            </select>
+                        </label>
+                        <label class="advanced-filter-control" for="status-filter">
+                            <span>Disponibilidad</span>
+                            <select id="status-filter">
+                                <option value="Todos">Todos los estados</option>
+                                <option value="Disponible">Disponible</option>
+                                <option value="Consignado">En consignación</option>
+                                <option value="Apartado">Apartado</option>
+                                <option value="Vendido">Vendido</option>
+                            </select>
+                        </label>
+                        <label class="advanced-filter-control" for="size-filter">
+                            <span>Tamaño de caja</span>
+                            <select id="size-filter">
+                                <option value="">Cualquier tamaño</option>
+                                <option value="under40">Hasta 39 mm</option>
+                                <option value="40-42">40–42 mm</option>
+                                <option value="43plus">43 mm o más</option>
+                            </select>
+                        </label>
+                        <button type="button" class="clear-filters-btn" id="clear-filters">Restablecer filtros</button>
+                    </div>
+                    <p class="filter-currency-help">Los rangos se basan en el precio publicado en pesos mexicanos.</p>
+                </details>
             </div>
 
             <!-- Inventory Counter -->
