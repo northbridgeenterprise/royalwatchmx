@@ -393,7 +393,7 @@ function setupModalEvents() {
     document.addEventListener("keydown", (e) => {
         if (!modal.classList.contains("active")) return;
         if (e.key === "Escape") {
-            if (modal.classList.contains("image-zoomed")) closeModalZoom();
+            if (modal.querySelector(".modal-container").classList.contains("image-zoomed")) closeModalZoom();
             else closeModal();
             return;
         }
@@ -706,8 +706,9 @@ function openModalDetails(watch) {
 function openModalZoom() {
     if (!modalImages.length) return;
     const modal = document.getElementById("product-modal");
+    const modalContainer = modal.querySelector(".modal-container");
     const zoomStage = document.getElementById("modal-zoom-stage");
-    modal.classList.add("image-zoomed");
+    modalContainer.classList.add("image-zoomed");
     zoomStage.setAttribute("aria-hidden", "false");
     updateModalPhotoIndicators();
     document.getElementById("modal-zoom-close").focus();
@@ -715,9 +716,10 @@ function openModalZoom() {
 
 function closeModalZoom() {
     const modal = document.getElementById("product-modal");
+    const modalContainer = modal?.querySelector(".modal-container");
     const zoomStage = document.getElementById("modal-zoom-stage");
-    if (!modal || !zoomStage) return;
-    modal.classList.remove("image-zoomed");
+    if (!modal || !modalContainer || !zoomStage) return;
+    modalContainer.classList.remove("image-zoomed");
     zoomStage.setAttribute("aria-hidden", "true");
     if (modal.classList.contains("active")) document.getElementById("modal-zoom-open").focus();
 }
