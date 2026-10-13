@@ -2630,3 +2630,11 @@ body { background: var(--bg-primary); }
 .hero-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 @media (max-width: 768px) { .hero-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 480px) { .hero-stats { display: grid; } }
+
+/* Keep the hero contrast overlay behind all slide content so copy stays readable. */
+.hero-carousel { z-index: 3; }
+.hero-section::after { z-index: 2; }
+.hero-title { color: #fffaf0; text-shadow: 0 2px 18px rgba(0,0,0,.32); }
+.hero-title em { color: #e3c77f; }
+.hero-subtitle { color: #f4f1e8; text-shadow: 0 1px 10px rgba(0,0,0,.55); }
+.hero-tagline { color: #f0d89d; text-shadow: 0 1px 8px rgba(0,0,0,.65); }
