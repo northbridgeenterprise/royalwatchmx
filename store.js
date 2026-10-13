@@ -8,7 +8,7 @@ let searchQuery = "";
 let activeSort = "default";
 let selectedWatch = null;
 let modalImages = [];
-let modalImgIndex = 0;
+let modalImgIndex = 0;`r`nlet modalSwipeStartX = null;
 let modalReturnFocus = null;
 
 // ========================
@@ -20,6 +20,7 @@ function initIcons() {
 
 document.addEventListener("DOMContentLoaded", () => {
     loadStoreCatalog();
+    setupSeptemberAnnouncement();
     setupStoreNavigation();
     setupStoreFilters();
     setupCurrencySwitcher();
@@ -78,6 +79,30 @@ function formatPrice(priceMXN, currency = activeCurrency) {
     const amount = getPriceInCurrency(priceMXN, currency);
     if (amount === null) return "Consultar precio";
     return `$${amount.toLocaleString("en-US", { maximumFractionDigits: 0 })} ${currency}`;
+}
+
+function isSeptemberOffer(watch, date = new Date()) {
+    const brand = String(watch?.marca || "").trim().toLowerCase();
+    return new Intl.DateTimeFormat("en-US", { timeZone: "America/Monterrey", month: "numeric" }).format(date) === "9" && (brand === "rolex" || brand === "cartier");
+}
+
+function getWatchPricing(watch, date = new Date()) {
+    const listedPrice = Number(watch?.precio) || 0;
+    const septemberOffer = isSeptemberOffer(watch, date);
+    return {
+        price: septemberOffer ? Math.round(listedPrice * 0.9) : listedPrice,
+        referencePrice: septemberOffer ? listedPrice : (Number(watch?.precioAnterior) || null),
+        septemberOffer,
+        extraDiscount: septemberOffer ? 10 : 0
+    };
+}
+
+function setupSeptemberAnnouncement() {
+    const active = new Intl.DateTimeFormat("en-US", { timeZone: "America/Monterrey", month: "numeric" }).format(new Date()) === "9";
+    ["september-promo-announcement", "september-promo-separator"].forEach((id) => {
+        const element = document.getElementById(id);
+        if (element) element.hidden = !active;
+    });
 }
 
 // ========================
@@ -316,8 +341,32 @@ function setupModalEvents() {
     const waActionBtn = document.getElementById("modal-btn-wa");
     const prevBtn = document.getElementById("modal-gallery-prev");
     const nextBtn = document.getElementById("modal-gallery-next");
+    const zoomOpenBtn = document.getElementById("modal-zoom-open");
+    const zoomCloseBtn = document.getElementById("modal-zoom-close");
+    const zoomPrevBtn = document.getElementById("modal-zoom-prev");
+    const zoomNextBtn = document.getElementById("modal-zoom-next");
+    const imageWrapper = document.querySelector(".modal-img-main-wrapper");
+
+    if (imageWrapper) {
+        imageWrapper.addEventListener("touchstart", (event) => {
+            modalSwipeStartX = event.changedTouches[0]?.clientX ?? null;
+        }, { passive: true });
+        imageWrapper.addEventListener("touchend", (event) => {
+            if (modalSwipeStartX === null || modalImages.length < 2) return;
+            const delta = event.changedTouches[0].clientX - modalSwipeStartX;
+            modalSwipeStartX = null;
+            if (Math.abs(delta) > 45) {
+                const step = delta < 0 ? 1 : -1;
+                changeModalImage((modalImgIndex + step + modalImages.length) % modalImages.length);
+            }
+        }, { passive: true });
+    }
 
     closeBtn.addEventListener("click", closeModal);
+    zoomOpenBtn.addEventListener("click", openModalZoom);
+    zoomCloseBtn.addEventListener("click", closeModalZoom);
+    zoomPrevBtn.addEventListener("click", () => changeModalImage((modalImgIndex - 1 + modalImages.length) % modalImages.length));
+    zoomNextBtn.addEventListener("click", () => changeModalImage((modalImgIndex + 1) % modalImages.length));
 
     modal.addEventListener("click", (e) => {
         if (e.target === modal) closeModal();
@@ -342,7 +391,8 @@ function setupModalEvents() {
     document.addEventListener("keydown", (e) => {
         if (!modal.classList.contains("active")) return;
         if (e.key === "Escape") {
-            closeModal();
+            if (modal.classList.contains("image-zoomed")) closeModalZoom();
+            else closeModal();
             return;
         }
         if (e.key === "Tab") {
@@ -373,8 +423,12 @@ function setupModalEvents() {
 
     waActionBtn.addEventListener("click", () => {
         if (!selectedWatch) return;
-        const priceText = formatPrice(selectedWatch.precio);
-        const msg = `Hola, estoy interesado en el reloj *${selectedWatch.marca} ${selectedWatch.modelo}* (Ref: *${selectedWatch.referencia || 'S/R'}*) por *${priceText}* que vi en stock en su vitrina web. ¿Sigue disponible?`;
+        const pricing = getWatchPricing(selectedWatch);
+        const priceText = formatPrice(pricing.price);
+        const promoText = pricing.septemberOffer ? " Incluye el 10% de descuento de septiembre." : "";
+        const currentStatus = selectedWatch.status || "Disponible";
+        const intent = currentStatus === "Vendido" ? "¿Podrían ayudarme a encontrar una pieza similar?" : "¿Me confirman existencia, condición y opciones de entrega?";
+        const msg = `Hola, me interesa el reloj *${selectedWatch.marca} ${selectedWatch.modelo}* (Ref: *${selectedWatch.referencia || 'S/R'}*). Precio mostrado: *${priceText}*.${promoText} ${intent}`;
         const waUrl = `https://api.whatsapp.com/send?phone=528121980008&text=${encodeURIComponent(msg)}`;
         window.open(waUrl, "_blank", "noopener,noreferrer");
     });
@@ -410,8 +464,8 @@ function renderStoreGrid() {
     });
 
     // 2. Sort
-    if (activeSort === "price-asc") filtered.sort((a, b) => a.precio - b.precio);
-    else if (activeSort === "price-desc") filtered.sort((a, b) => b.precio - a.precio);
+    if (activeSort === "price-asc") filtered.sort((a, b) => getWatchPricing(a).price - getWatchPricing(b).price);
+    else if (activeSort === "price-desc") filtered.sort((a, b) => getWatchPricing(b).price - getWatchPricing(a).price);
     else if (activeSort === "brand-asc") filtered.sort((a, b) => (a.marca || "").localeCompare(b.marca || ""));
 
     countSpan.textContent = filtered.length;
@@ -439,16 +493,11 @@ function renderStoreGrid() {
         if (currentStatus === "Apartado") statusClass = "status-apartado";
         else if (currentStatus === "Consignado") statusClass = "status-consignado";
         else if (currentStatus === "Vendido") statusClass = "status-vendido";
-        else if (p.precioAnterior) {
-            currentStatus = "Oportunidad";
-            statusClass = "status-promocion";
-        }
 
+        const pricing = getWatchPricing(p);
         let priceHTML = "";
-        const rawPrice = Number(p.precio);
-        const rawOriginal = Number(p.precioAnterior) || null;
-        if (rawOriginal) priceHTML += `<span class="card-price-original">${escapeHTML(formatPrice(rawOriginal))}</span>`;
-        priceHTML += `<span class="card-price">${escapeHTML(formatPrice(rawPrice))}</span>`;
+        if (pricing.referencePrice) priceHTML += `<span class="card-price-original">${escapeHTML(formatPrice(pricing.referencePrice))}</span>`;
+        priceHTML += `<span class="card-price${pricing.septemberOffer ? ' card-price-seasonal' : ''}">${escapeHTML(formatPrice(pricing.price))}</span>`;
 
         const imgPath = escapeHTML(safeCatalogImage(p.imagen));
         const brand = escapeHTML(p.marca);
@@ -462,6 +511,7 @@ function renderStoreGrid() {
         card.innerHTML = `
             <div class="card-image-wrapper">
                 <span class="card-badge ${statusClass}">${statusLabel}</span>
+                ${pricing.septemberOffer ? '<span class="card-seasonal-label">10% menos · septiembre</span>' : ''}
                 <img src="${imgPath}" alt="${brand} ${model}" class="card-img" loading="lazy">
                 <div class="card-img-overlay">
                     <button type="button" class="overlay-btn" aria-label="Ver detalles de ${brand} ${model}">Ver Pieza</button>
@@ -515,6 +565,7 @@ function openModalDetails(watch) {
     }
     modalImages = modalImages.filter(Boolean);
     modalImgIndex = 0;
+    closeModalZoom();
 
     // Reset main image display
     const imgEl = document.getElementById("modal-img");
@@ -522,6 +573,8 @@ function openModalDetails(watch) {
         imgEl.src = safeCatalogImage(watch.imagen);
         imgEl.alt = `${watch.marca} ${watch.modelo}`;
     }
+
+    updateModalPhotoIndicators();
 
     // Reset viewport fade
     const viewport = document.querySelector(".modal-img-viewport");
@@ -568,9 +621,9 @@ function openModalDetails(watch) {
     document.getElementById("modal-model").textContent = watch.modelo;
     document.getElementById("modal-ref").textContent = watch.referencia || "S/R";
 
-    // Catalog prices are stored in USD (same unit as the admin form).
-    const rawOriginal = Number(watch.precioAnterior) || null;
-    const priceText = formatPrice(watch.precio);
+    const pricing = getWatchPricing(watch);
+    const rawOriginal = pricing.referencePrice;
+    const priceText = formatPrice(pricing.price);
     const originalPriceText = rawOriginal ? formatPrice(rawOriginal) : "";
 
     document.getElementById("modal-price").textContent = priceText;
@@ -587,7 +640,19 @@ function openModalDetails(watch) {
     // Set Premium Pricing label
     const modalPriceLabel = document.getElementById("modal-price-label");
     if (modalPriceLabel) {
-        modalPriceLabel.textContent = rawOriginal ? "Inversión Especial (Promo)" : "Inversión Especial";
+        modalPriceLabel.textContent = pricing.septemberOffer ? "Promoción de septiembre · 10% menos" : (rawOriginal ? "Precio de oportunidad" : "Precio de la pieza");
+    }
+    const currencyNote = document.getElementById("modal-currency-note");
+    if (currencyNote) currencyNote.textContent = activeCurrency === "MXN" ? "Pesos mexicanos" : "Dólares · referencia";
+    const originalLabel = document.getElementById("modal-price-original-label");
+    if (originalLabel) {
+        originalLabel.textContent = pricing.septemberOffer ? "Precio publicado" : "Precio anterior";
+        originalLabel.style.display = rawOriginal ? "inline-block" : "none";
+    }
+    const promoNote = document.getElementById("modal-promo-note");
+    if (promoNote) {
+        promoNote.hidden = !pricing.septemberOffer;
+        promoNote.textContent = pricing.septemberOffer ? `10% de descuento aplicado al precio publicado. Ahorras ${formatPrice(rawOriginal - pricing.price)} durante septiembre.` : "";
     }
 
     document.getElementById("modal-spec-medida").textContent = watch.medida || "--";
@@ -607,13 +672,15 @@ function openModalDetails(watch) {
     const availabilityNote = document.getElementById("modal-availability-note");
     if (availabilityNote) {
         const notes = {
-            "Disponible": "La disponibilidad puede cambiar. Confirma la pieza antes de tu visita.",
-            "Consignado": "Pieza en consignación. Consulta su disponibilidad con nuestro equipo.",
-            "Apartado": "Esta pieza está apartada. Escríbenos para conocer alternativas.",
-            "Vendido": "Esta pieza ya fue vendida. Podemos ayudarte a encontrar una similar."
+            "Disponible": "La existencia se confirma con un asesor antes de concretar tu visita.",
+            "Consignado": "Pieza en consignación. Confirma si sigue disponible antes de visitarnos.",
+            "Apartado": "Esta pieza está apartada. Pregunta por alternativas disponibles.",
+            "Vendido": "Esta pieza ya se vendió. Podemos ayudarte a localizar una similar."
         };
         availabilityNote.textContent = notes[currentStatus] || "Consulta con nuestro equipo el estado actual de esta pieza.";
     }
+    const waLabel = document.getElementById("modal-btn-wa-label");
+    if (waLabel) waLabel.textContent = currentStatus === "Vendido" ? "Buscar una pieza similar" : "Consultar por WhatsApp";
 
     modal.classList.add("active");
     modal.setAttribute("aria-hidden", "false");
@@ -622,7 +689,45 @@ function openModalDetails(watch) {
     initIcons();
 }
 
+function openModalZoom() {
+    if (!modalImages.length) return;
+    const modal = document.getElementById("product-modal");
+    const zoomStage = document.getElementById("modal-zoom-stage");
+    modal.classList.add("image-zoomed");
+    zoomStage.setAttribute("aria-hidden", "false");
+    updateModalPhotoIndicators();
+    document.getElementById("modal-zoom-close").focus();
+}
+
+function closeModalZoom() {
+    const modal = document.getElementById("product-modal");
+    const zoomStage = document.getElementById("modal-zoom-stage");
+    if (!modal || !zoomStage) return;
+    modal.classList.remove("image-zoomed");
+    zoomStage.setAttribute("aria-hidden", "true");
+    if (modal.classList.contains("active")) document.getElementById("modal-zoom-open").focus();
+}
+
+function updateModalPhotoIndicators() {
+    const count = `${String(modalImgIndex + 1).padStart(2, "0")} / ${String(modalImages.length || 1).padStart(2, "0")}`;
+    const galleryCount = document.getElementById("modal-gallery-count");
+    const zoomCounter = document.getElementById("modal-zoom-counter");
+    const mainImage = document.getElementById("modal-img");
+    const zoomImage = document.getElementById("modal-zoom-img");
+    if (galleryCount) galleryCount.textContent = count;
+    if (zoomCounter) zoomCounter.textContent = count;
+    if (zoomImage && modalImages[modalImgIndex]) {
+        zoomImage.src = safeCatalogImage(modalImages[modalImgIndex]);
+        zoomImage.alt = selectedWatch ? `${selectedWatch.marca} ${selectedWatch.modelo}` : "Fotografía ampliada del reloj";
+    }
+    ["modal-zoom-prev", "modal-zoom-next"].forEach((id) => {
+        const control = document.getElementById(id);
+        if (control) control.hidden = modalImages.length < 2;
+    });
+}
+
 function closeModal() {
+    closeModalZoom();
     const modal = document.getElementById("product-modal");
     modal.classList.remove("active");
     modal.setAttribute("aria-hidden", "true");
@@ -647,6 +752,7 @@ function changeModalImage(index) {
     setTimeout(() => {
         imgEl.src = safeCatalogImage(modalImages[modalImgIndex]);
         viewport.classList.remove("fade-out");
+        updateModalPhotoIndicators();
 
         // Update active thumbnail
         const track = document.getElementById("modal-thumbnails-track");

@@ -22,7 +22,7 @@
     <!-- Boutique announcement -->
     <div class="promo-bar" id="promo-bar">
         <div class="promo-bar-content">
-            <span class="promo-bar-text"><span class="announcement-mark" aria-hidden="true"></span> Showroom privado en San Pedro · Atención con cita</span>
+            <span class="promo-bar-text"><span class="announcement-mark" aria-hidden="true"></span> Showroom privado en San Pedro · Atención con cita<span class="season-promo-separator" id="september-promo-separator" hidden aria-hidden="true">·</span><span class="season-promo-announcement" id="september-promo-announcement" hidden>10% de descuento en Rolex y Cartier durante septiembre</span></span>
             <a class="announcement-link" href="https://api.whatsapp.com/send?phone=528121980008&amp;text=Hola,%20me%20gustaría%20agendar%20una%20cita." target="_blank" rel="noopener noreferrer">Agenda tu visita <span aria-hidden="true">↗</span></a>
         </div>
     </div>
@@ -344,6 +344,8 @@
                         <div class="modal-img-viewport">
                             <img src="" alt="Reloj" class="modal-main-img" id="modal-img">
                         </div>
+                        <span class="modal-gallery-count" id="modal-gallery-count" aria-live="polite">01 / 01</span>
+                        <button type="button" class="modal-zoom-btn" id="modal-zoom-open" aria-label="Ampliar fotografía"><i data-lucide="maximize-2"></i><span>Ampliar</span></button>
                         <button type="button" class="modal-gallery-arrow next" id="modal-gallery-next" aria-label="Siguiente foto"><i data-lucide="chevron-right"></i></button>
                     </div>
                     <!-- Gallery Thumbnails -->
@@ -359,18 +361,23 @@
                     <span class="modal-brand" id="modal-brand">ROLEX</span>
                     <h4 class="modal-model" id="modal-model">Submariner Date 126610LN</h4>
                     <p class="modal-ref-code">Ref: <span id="modal-ref">126610LN</span></p>
+                    <div class="modal-stock-row"><span class="modal-status-badge status-disponible" id="modal-spec-status">Disponible</span><span>Existencia por confirmar</span></div>
                     
                     <div class="modal-price-box">
-                        <span class="price-label" id="modal-price-label">Inversión Especial</span>
+                        <div class="modal-price-heading">
+                            <span class="price-label" id="modal-price-label">Precio de la pieza</span>
+                            <span class="modal-currency-note" id="modal-currency-note">Pesos mexicanos</span>
+                        </div>
                         <div class="modal-price-container">
-                            <span class="modal-price-original" id="modal-price-original" style="display: none;"></span>
+                            <span class="modal-price-original-label" id="modal-price-original-label" style="display: none;"></span><span class="modal-price-original" id="modal-price-original" style="display: none;"></span>
                             <span class="modal-price-value" id="modal-price">—</span>
                         </div>
+                        <p class="modal-promo-note" id="modal-promo-note" hidden></p>
                     </div>
 
                     <!-- Watch Specs -->
                     <div class="modal-specs-box">
-                        <h5>Especificaciones Técnicas</h5>
+                        <h5>Detalles de la pieza</h5>
                         <table class="specs-table">
                             <tr>
                                 <td class="spec-label">Diámetro Caja</td>
@@ -388,10 +395,7 @@
                                 <td class="spec-label">Movimiento</td>
                                 <td class="spec-value" id="modal-spec-movimiento">Automático (Cal. 3235)</td>
                             </tr>
-                            <tr>
-                                <td class="spec-label">Estatus</td>
-                                <td class="spec-value"><span class="modal-status-badge status-disponible" id="modal-spec-status">Disponible</span></td>
-                            </tr>
+
                         </table>
                     </div>
 
@@ -399,12 +403,21 @@
 
                     <!-- WhatsApp Action -->
                     <div class="modal-action-box">
-                        <button class="btn-action-wa" id="modal-btn-wa">
-                            <i data-lucide="message-square"></i> Consultar Disponibilidad por WhatsApp
+                        <button type="button" class="btn-action-wa" id="modal-btn-wa">
+                            <i data-lucide="message-circle"></i><span id="modal-btn-wa-label">Consultar por WhatsApp</span><i data-lucide="arrow-up-right" class="wa-arrow" aria-hidden="true"></i>
                         </button>
-                        <p class="action-caption">Un asesor te atenderá personalmente de inmediato para coordinar el pago o resolver dudas.</p>
+                        <p class="action-caption">Te confirmamos existencia, condición, entrega y opciones de pago antes de tu visita.</p>
                     </div>
                 </div>
+            </div>
+            <div class="modal-zoom-stage" id="modal-zoom-stage" aria-hidden="true">
+                <div class="modal-zoom-toolbar">
+                    <span id="modal-zoom-counter">01 / 01</span>
+                    <button type="button" id="modal-zoom-close" aria-label="Cerrar fotografía ampliada"><i data-lucide="x"></i><span>Cerrar</span></button>
+                </div>
+                <button type="button" class="modal-gallery-arrow prev" id="modal-zoom-prev" aria-label="Foto anterior"><i data-lucide="chevron-left"></i></button>
+                <img src="" alt="" id="modal-zoom-img">
+                <button type="button" class="modal-gallery-arrow next" id="modal-zoom-next" aria-label="Foto siguiente"><i data-lucide="chevron-right"></i></button>
             </div>
         </div>
     </div>
