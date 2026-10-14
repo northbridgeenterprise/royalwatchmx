@@ -8,6 +8,7 @@
     let currency = "MXN";
     let photoTouchStart = null;
     let suppressPhotoOpen = false;
+    let paymentAvailable = false;
     const byId = (id) => document.getElementById(id);
     const catalog = () => typeof WATCHES_PRODUCTS !== "undefined" && Array.isArray(WATCHES_PRODUCTS) ? WATCHES_PRODUCTS : [];
     const safeRead = (key, fallback) => {
@@ -249,7 +250,84 @@
             list.append(row);
         });
     }
-    function wireActions() {
+    const formatMXN = (amount) => new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 2 }).format(amount);
+    function selectedCheckoutValue(name) {
+        return document.querySelector("input[name=\"" + name + "\"]:checked")?.value || "";
+    }
+    function updateCheckoutTotals() {
+        const value = pricing().price;
+        const delivery = selectedCheckoutValue("deliveryArea");
+        const depositOption = document.querySelector("[data-plan-option=deposit]");
+        const depositInput = document.querySelector("input[name=\"plan\"][value=\"deposit\"]");
+        const allowDeposit = delivery === "metro";
+        depositOption.hidden = !allowDeposit;
+        depositInput.disabled = !allowDeposit;
+        if (!allowDeposit && depositInput.checked) document.querySelector("input[name=\"plan\"][value=\"full\"]").checked = true;
+        const plan = selectedCheckoutValue("plan");
+        const dueNow = plan === "deposit" ? Math.round(value * 50) / 100 : value;
+        byId("checkout-total").textContent = formatMXN(value);
+        byId("checkout-due").textContent = formatMXN(dueNow);
+        byId("checkout-due-label").textContent = plan === "deposit" ? "Anticipo en línea (50%)" : "Pagar ahora";
+        byId("checkout-cash-row").hidden = plan !== "deposit";
+        byId("checkout-cash").textContent = plan === "deposit" ? formatMXN(value - dueNow) : "";
+    }
+    async function setupCheckout() {
+        if (!product || clean(product.status || "Disponible") !== "Disponible" || pricing().price <= 0) return;
+        try {
+            const response = await fetch("/api/payment-config?pieza=" + encodeURIComponent(makeSlug(product)), { headers: { Accept: "application/json" }, cache: "no-store" });
+            if (!response.ok) return;
+            const config = await response.json();
+            if (!config.enabled || !config.eligible) return;
+            paymentAvailable = true;
+            byId("checkout-action").hidden = false;
+            byId("mobile-checkout").hidden = false;
+            if (window.lucide) window.lucide.createIcons();
+        } catch { /* WhatsApp remains available if checkout is not configured. */ }
+    }
+    function wireCheckout() {
+        const dialog = byId("checkout-dialog");
+        const open = () => {
+            if (!paymentAvailable) return;
+            byId("checkout-error").hidden = true;
+            updateCheckoutTotals();
+            dialog.showModal();
+        };
+        byId("checkout-action").addEventListener("click", open);
+        byId("mobile-checkout").addEventListener("click", open);
+        byId("checkout-close").addEventListener("click", () => dialog.close());
+        dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
+        document.querySelectorAll("input[name=\"deliveryArea\"], input[name=\"plan\"]").forEach((input) => input.addEventListener("change", updateCheckoutTotals));
+        updateCheckoutTotals();
+        byId("checkout-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            if (!paymentAvailable) return;
+            const submit = byId("checkout-submit");
+            const error = byId("checkout-error");
+            const original = submit.innerHTML;
+            submit.disabled = true;
+            submit.querySelector("span").textContent = "Conectando con Mercado Pago…";
+            error.hidden = true;
+            try {
+                const response = await fetch("/api/create-payment", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", Accept: "application/json" },
+                    body: JSON.stringify({ slug: makeSlug(product), plan: selectedCheckoutValue("plan"), deliveryArea: selectedCheckoutValue("deliveryArea"), idempotencyKey: crypto.randomUUID() })
+                });
+                const result = await response.json();
+                if (!response.ok || !result.checkoutUrl || !result.orderId || !result.reference) throw new Error(result.error || "No pudimos iniciar el pago.");
+                try {
+                    sessionStorage.setItem("rwm_last_mp_order", JSON.stringify({ orderId: result.orderId, reference: result.reference, plan: result.plan, deliveryArea: result.deliveryArea, product: result.product, amount: result.amount, slug: result.product.slug }));
+                } catch { /* Mercado Pago still receives the checkout redirect. */ }
+                window.location.assign(result.checkoutUrl);
+            } catch (failure) {
+                error.textContent = failure?.message || "Ocurrió un problema. Intenta de nuevo o escríbenos por WhatsApp.";
+                error.hidden = false;
+                submit.innerHTML = original;
+                submit.disabled = false;
+                if (window.lucide) window.lucide.createIcons();
+            }
+        });
+    }    function wireActions() {
         document.querySelectorAll(".currency").forEach((button) => button.addEventListener("click", () => {
             currency = button.dataset.currency;
             document.querySelectorAll(".currency").forEach((option) => { const active = option === button; option.classList.toggle("active", active); option.setAttribute("aria-pressed", String(active)); });
@@ -332,7 +410,7 @@
         byId("product-intro").textContent = factList.length
             ? `Datos publicados para esta pieza: ${factList.join(" · ")}. Confirma condición, accesorios y entrega con un asesor.`
             : "Solicita al asesor las características, condición y accesorios de esta pieza antes de coordinar tu visita.";
-        renderPhotos(); renderSpecs(); renderStatusAndPrice(); setMeta(); renderRelated(); wireActions();
+        renderPhotos(); renderSpecs(); renderStatusAndPrice(); setMeta(); renderRelated(); wireActions(); wireCheckout(); setupCheckout();
         if (window.lucide) window.lucide.createIcons();
     });
 })();

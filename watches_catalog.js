@@ -249,3 +249,5 @@ function migrateStoredCatalogPrices() {
         // Leave stored catalog untouched if this browser blocks or has invalid local data.
     }
 }
+
+if (typeof module !== 'undefined' && module.exports) module.exports = WATCHES_PRODUCTS;
