@@ -9,6 +9,7 @@ let activeSort = "default";
 let activeStatusFilter = "Todos";
 let activeSizeFilter = "";
 let activePriceBand = "";
+let activeRecentFilter = false;
 let selectedWatch = null;
 let modalImages = [];
 let modalImgIndex = 0;
@@ -135,6 +136,7 @@ function loadStoreCatalog() {
     });
 
     storeProducts = merged;
+    updateRecentProductsControl();
 }
 
 // ========================
@@ -327,6 +329,18 @@ function setupStoreFilters() {
     });
     const clearButton = document.getElementById("clear-filters");
     if (clearButton) clearButton.addEventListener("click", resetStoreFilters);
+    const recentButton = document.getElementById("show-recent-products");
+    if (recentButton) recentButton.addEventListener("click", () => {
+        if (activeRecentFilter) {
+            resetStoreFilters();
+            return;
+        }
+        resetStoreFilters();
+        activeRecentFilter = true;
+        updateRecentProductsControl();
+        renderStoreGrid();
+        document.getElementById("store-grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
     updatePriceBandLabels();
 }
 
@@ -356,6 +370,7 @@ function resetStoreFilters() {
     activeStatusFilter = "Todos";
     activeSizeFilter = "";
     activePriceBand = "";
+    activeRecentFilter = false;
     const searchInput = document.getElementById("store-search");
     const sortSelect = document.getElementById("store-sort");
     const priceSelect = document.getElementById("price-band");
@@ -371,6 +386,7 @@ function resetStoreFilters() {
         button.classList.toggle("active", selected);
         button.setAttribute("aria-pressed", String(selected));
     });
+    updateRecentProductsControl();
     renderStoreGrid();
 }
 
@@ -506,10 +522,23 @@ function setupModalEvents() {
 // ========================
 // RENDER PRODUCTS GRID
 // ========================
+function updateRecentProductsControl() {
+    const count = storeProducts.filter(product => product.nuevo === true).length;
+    const countElement = document.getElementById("recent-products-count");
+    const button = document.getElementById("show-recent-products");
+    if (countElement) countElement.textContent = String(count);
+    if (!button) return;
+    button.disabled = count === 0;
+    button.setAttribute("aria-pressed", String(activeRecentFilter));
+    button.innerHTML = activeRecentFilter
+        ? 'Ver todo el catálogo <span aria-hidden="true">↗</span>'
+        : 'Explorar novedades <span aria-hidden="true">↗</span>';
+}
+
 function updateAdvancedFilterSummary() {
     const badge = document.getElementById("filters-active-count");
     if (!badge) return;
-    const activeCount = Number(activeBrandFilter !== "Todos") + Number(Boolean(searchQuery)) + Number(Boolean(activePriceBand)) + Number(activeStatusFilter !== "Todos") + Number(Boolean(activeSizeFilter));
+    const activeCount = Number(activeBrandFilter !== "Todos") + Number(Boolean(searchQuery)) + Number(Boolean(activePriceBand)) + Number(activeStatusFilter !== "Todos") + Number(Boolean(activeSizeFilter)) + Number(activeRecentFilter);
     badge.textContent = String(activeCount);
     badge.hidden = activeCount === 0;
 }
@@ -560,7 +589,7 @@ function renderStoreGrid() {
             else if (activeSizeFilter === "40-42") sizeMatch = size >= 40 && size < 43;
             else if (activeSizeFilter === "43plus") sizeMatch = size >= 43;
         }
-        return brandMatch && queryMatch && statusMatch && priceMatch && sizeMatch;
+        return brandMatch && queryMatch && statusMatch && priceMatch && sizeMatch && (!activeRecentFilter || p.nuevo === true);
     });
 
     updateAdvancedFilterSummary();
@@ -591,6 +620,7 @@ function renderStoreGrid() {
     filtered.forEach(p => {
         const card = document.createElement("article");
         card.className = "watch-card"; // starts hidden, revealed by IntersectionObserver
+        if (p.nuevo === true) card.classList.add("watch-card-new");
 
         let currentStatus = p.status || "Disponible";
         let statusClass = "status-disponible";
@@ -616,6 +646,7 @@ function renderStoreGrid() {
         card.innerHTML = `
             <div class="card-image-wrapper">
                 <span class="card-badge ${statusClass}">${statusLabel}</span>
+                ${p.nuevo === true ? '<span class="card-new-label">Recién agregado</span>' : ''}
                 ${pricing.septemberOffer ? '<span class="card-seasonal-label">10% menos · septiembre</span>' : ''}
                 <img src="${imgPath}" alt="${brand} ${model}" class="card-img" loading="lazy">
                 <div class="card-img-overlay">

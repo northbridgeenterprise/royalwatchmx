@@ -2769,3 +2769,33 @@ body { background: var(--bg-primary); }
 .card-btn span { font-size: 13px; }
 @media (max-width: 760px) { .advanced-filter-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .advanced-filter-grid .clear-filters-btn { grid-column: 1 / -1; } }
 @media (max-width: 420px) { .advanced-filter-grid { grid-template-columns: minmax(0,1fr); } .advanced-filter-grid .clear-filters-btn { grid-column: auto; } }
+
+/* Recent additions callout and product markers */
+.recent-arrivals {
+    position: relative; display: flex; align-items: center; justify-content: space-between; gap: 28px;
+    margin: 0 0 28px; padding: 25px clamp(20px, 3vw, 34px); overflow: hidden;
+    color: #f5f1e7; background: #17291f; border: 1px solid rgba(183, 154, 99, .48);
+}
+.recent-arrivals::after {
+    position: absolute; top: -95px; right: 20%; width: 240px; height: 240px; border: 1px solid rgba(215, 193, 145, .12);
+    border-radius: 50%; content: ""; pointer-events: none;
+}
+.recent-arrivals-copy, .recent-arrivals-action { position: relative; z-index: 1; }
+.recent-arrivals-kicker { display: block; margin-bottom: 7px; color: #d5bc86; font: 600 9px/1.4 var(--font-sub); letter-spacing: .2em; text-transform: uppercase; }
+.recent-arrivals-copy h4 { margin: 0 0 6px; color: #f5f1e7; font: 500 clamp(21px, 2.4vw, 28px)/1.2 var(--font-heading); letter-spacing: -.02em; }
+.recent-arrivals-copy p { margin: 0; color: #c5ccc3; font-size: 12px; line-height: 1.65; }
+.recent-arrivals-action { display: flex; align-items: flex-end; flex-direction: column; gap: 10px; flex-shrink: 0; }
+.recent-arrivals-count { color: #d6dbd2; font: 500 10px/1.4 var(--font-sub); letter-spacing: .08em; text-transform: uppercase; }
+.recent-arrivals-count strong { color: #e1c98f; font-size: 14px; }
+.recent-arrivals-button { display: inline-flex; align-items: center; justify-content: center; gap: 16px; min-height: 42px; padding: 0 17px; color: #18251d; background: #d6bd83; border: 1px solid #d6bd83; cursor: pointer; font: 700 9px/1 var(--font-sub); letter-spacing: .1em; text-transform: uppercase; transition: background .2s ease, color .2s ease, border-color .2s ease; }
+.recent-arrivals-button:hover:not(:disabled) { color: #f7f3e9; background: transparent; border-color: rgba(245,240,228,.55); }
+.recent-arrivals-button:focus-visible { outline: 2px solid #f5f1e7; outline-offset: 3px; }
+.recent-arrivals-button:disabled { opacity: .55; cursor: not-allowed; }
+.card-new-label { position: absolute; top: 14px; left: 14px; z-index: 10; padding: 6px 8px; color: #243328; background: #e0cca0; font: 700 8px/1 var(--font-sub); letter-spacing: .08em; text-transform: uppercase; }
+.watch-card-new .card-seasonal-label { top: 42px; }
+#store-grid { scroll-margin-top: 130px; }
+@media (max-width: 620px) {
+    .recent-arrivals { align-items: stretch; flex-direction: column; gap: 17px; padding: 21px 18px; }
+    .recent-arrivals-action { align-items: flex-start; }
+    .recent-arrivals-button { width: 100%; }
+}

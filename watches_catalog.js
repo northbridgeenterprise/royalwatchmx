@@ -233,7 +233,7 @@ const WATCHES_PRODUCTS = [
         precio: 7000,
         imagen: "relojes/rw_rolex_day_date_gold_champagne_dial_01.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -246,7 +246,7 @@ const WATCHES_PRODUCTS = [
         precio: 7213,
         imagen: "relojes/rw_tag_heuer_formula_1_racing_chronograph_02.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -259,7 +259,7 @@ const WATCHES_PRODUCTS = [
         precio: 7425,
         imagen: "relojes/rw_cartier_santos_skeleton_gold_accents_03.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -272,7 +272,7 @@ const WATCHES_PRODUCTS = [
         precio: 7125,
         imagen: "relojes/rw_montblanc_chronograph_steel_white_dial_04.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -285,7 +285,7 @@ const WATCHES_PRODUCTS = [
         precio: 7338,
         imagen: "relojes/rw_rolex_daytona_gold_turquoise_dial_05.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -298,7 +298,7 @@ const WATCHES_PRODUCTS = [
         precio: 7038,
         imagen: "relojes/rw_cartier_santos_adlc_black_dial_06.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -311,7 +311,7 @@ const WATCHES_PRODUCTS = [
         precio: 7250,
         imagen: "relojes/rw_rolex_cellini_small_seconds_black_dial_07.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -324,7 +324,7 @@ const WATCHES_PRODUCTS = [
         precio: 7463,
         imagen: "relojes/rw_cartier_santos_adlc_full_black_08.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -337,7 +337,7 @@ const WATCHES_PRODUCTS = [
         precio: 7163,
         imagen: "relojes/rw_cartier_santos_chronograph_white_dial_09.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -350,7 +350,7 @@ const WATCHES_PRODUCTS = [
         precio: 7375,
         imagen: "relojes/rw_rolex_submariner_date_black_dial_steel_01_10.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -363,7 +363,7 @@ const WATCHES_PRODUCTS = [
         precio: 7075,
         imagen: "relojes/rw_rolex_datejust_two_tone_white_dial_roman_11.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -376,7 +376,7 @@ const WATCHES_PRODUCTS = [
         precio: 7288,
         imagen: "relojes/rw_breitling_endurance_pro_chronograph_black_12.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -389,7 +389,7 @@ const WATCHES_PRODUCTS = [
         precio: 7500,
         imagen: "relojes/rw_patek_philippe_nautilus_blue_dial_steel_13.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -402,7 +402,7 @@ const WATCHES_PRODUCTS = [
         precio: 7200,
         imagen: "relojes/rw_audemars_piguet_royal_oak_offshore_skeleton_black_14.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -415,7 +415,7 @@ const WATCHES_PRODUCTS = [
         precio: 7413,
         imagen: "relojes/rw_audemars_piguet_royal_oak_steel_blue_dial_15.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -428,7 +428,7 @@ const WATCHES_PRODUCTS = [
         precio: 7113,
         imagen: "relojes/rw_cartier_santos_gold_roman_dial_16.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -441,7 +441,7 @@ const WATCHES_PRODUCTS = [
         precio: 7325,
         imagen: "relojes/rw_audemars_piguet_royal_oak_yellow_gold_white_dial_17.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -454,7 +454,7 @@ const WATCHES_PRODUCTS = [
         precio: 7025,
         imagen: "relojes/rw_rolex_submariner_date_black_dial_steel_02_18.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -467,7 +467,7 @@ const WATCHES_PRODUCTS = [
         precio: 7238,
         imagen: "relojes/rw_cartier_ballon_bleu_steel_white_roman_dial_19.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -480,7 +480,7 @@ const WATCHES_PRODUCTS = [
         precio: 7450,
         imagen: "relojes/rw_richard_mille_tonneau_skeleton_black_gold_20.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -493,7 +493,7 @@ const WATCHES_PRODUCTS = [
         precio: 7150,
         imagen: "relojes/rw_cartier_santos_yellow_gold_black_dial_21.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -506,7 +506,7 @@ const WATCHES_PRODUCTS = [
         precio: 7363,
         imagen: "relojes/rw_rolex_submariner_date_yellow_gold_black_dial_22.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -519,7 +519,7 @@ const WATCHES_PRODUCTS = [
         precio: 7063,
         imagen: "relojes/rw_rolex_submariner_date_steel_black_dial_03_23.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -532,7 +532,7 @@ const WATCHES_PRODUCTS = [
         precio: 7275,
         imagen: "relojes/rw_rolex_submariner_date_green_bezel_steel_24.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -545,7 +545,7 @@ const WATCHES_PRODUCTS = [
         precio: 7488,
         imagen: "relojes/rw_rolex_submariner_date_blue_bezel_steel_25.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -558,7 +558,7 @@ const WATCHES_PRODUCTS = [
         precio: 7188,
         imagen: "relojes/rw_rolex_datejust_gold_champagne_dial_26.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -571,7 +571,7 @@ const WATCHES_PRODUCTS = [
         precio: 7400,
         imagen: "relojes/rw_rolex_daytona_panda_steel_27.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -584,7 +584,7 @@ const WATCHES_PRODUCTS = [
         precio: 7100,
         imagen: "relojes/rw_rolex_gmt_master_ii_pepsi_jubilee_28.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -597,7 +597,7 @@ const WATCHES_PRODUCTS = [
         precio: 7313,
         imagen: "relojes/rw_rolex_datejust_two_tone_silver_roman_dial_29.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -610,7 +610,7 @@ const WATCHES_PRODUCTS = [
         precio: 7013,
         imagen: "relojes/rw_cartier_santos_all_black_30.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -623,7 +623,7 @@ const WATCHES_PRODUCTS = [
         precio: 7225,
         imagen: "relojes/rw_audemars_piguet_royal_oak_yellow_gold_black_dial_31.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -636,7 +636,7 @@ const WATCHES_PRODUCTS = [
         precio: 7438,
         imagen: "relojes/rw_rolex_datejust_green_dial_jubilee_32.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -649,7 +649,7 @@ const WATCHES_PRODUCTS = [
         precio: 7138,
         imagen: "relojes/rw_rolex_submariner_date_green_dial_steel_33.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -662,7 +662,7 @@ const WATCHES_PRODUCTS = [
         precio: 7350,
         imagen: "relojes/rw_rolex_daytona_gold_champagne_dial_black_strap_34.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -675,7 +675,7 @@ const WATCHES_PRODUCTS = [
         precio: 7050,
         imagen: "relojes/rw_franck_muller_vanguard_skeleton_black_35.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -688,7 +688,7 @@ const WATCHES_PRODUCTS = [
         precio: 7263,
         imagen: "relojes/rw_rolex_datejust_black_dial_jubilee_36.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -701,7 +701,7 @@ const WATCHES_PRODUCTS = [
         precio: 7475,
         imagen: "relojes/rw_cartier_santos_steel_white_dial_confirmar_tamano_37.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -714,7 +714,7 @@ const WATCHES_PRODUCTS = [
         precio: 7175,
         imagen: "relojes/rw_rolex_submariner_date_black_dial_steel_04_38.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -727,7 +727,7 @@ const WATCHES_PRODUCTS = [
         precio: 7388,
         imagen: "relojes/rw_rolex_submariner_date_green_dial_steel_ii_39.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -740,7 +740,7 @@ const WATCHES_PRODUCTS = [
         precio: 7088,
         imagen: "relojes/rw_rolex_submariner_date_blue_dial_steel_40.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 
     {
@@ -753,7 +753,7 @@ const WATCHES_PRODUCTS = [
         precio: 7300,
         imagen: "relojes/rw_rolex_daytona_black_dial_steel_41.webp",
         galeria: [],
-        status: "Disponible"
+        status: "Disponible", nuevo: true
     },
 ];
 
