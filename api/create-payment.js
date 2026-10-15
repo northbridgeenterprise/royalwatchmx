@@ -18,11 +18,17 @@ module.exports = async function handler(req, res) {
   if (body.plan === 'deposit' && body.deliveryArea !== 'metro') return payment.respond(res, 400, { error: 'El anticipo con saldo en efectivo está disponible únicamente en Monterrey y su área metropolitana.' });
   if (typeof body.idempotencyKey !== 'string' || !/^[a-f0-9-]{36}$/i.test(body.idempotencyKey)) return payment.respond(res, 400, { error: 'No pudimos iniciar el pago; vuelve a intentarlo.' });
 
-  const listedPrice = payment.currentPrice(product);
-  if (!Number.isFinite(listedPrice) || listedPrice <= 0) return payment.respond(res, 409, { error: 'Consulta el precio con un asesor para continuar.' });
-  const payable = body.plan === 'deposit' ? listedPrice / 2 : listedPrice;
+  const brand = String(product.marca || '').trim().toLowerCase();
+  const fullSetEligible = brand === 'rolex' || brand === 'cartier';
+  const includeFullSet = body.includeFullSet === true;
+  if (includeFullSet && !fullSetEligible) return payment.respond(res, 400, { error: 'El Full Set opcional solo está disponible en fichas Rolex y Cartier.' });
+  const fullSetAmount = includeFullSet ? 1000 : 0;
+  const basePrice = payment.currentPrice(product);
+  if (!Number.isFinite(basePrice) || basePrice <= 0) return payment.respond(res, 409, { error: 'Consulta el precio con un asesor para continuar.' });
+  const listedPrice = basePrice + fullSetAmount;
+  const payable = body.plan === 'deposit' ? Math.round(listedPrice / 2) : listedPrice;
   const payableText = payment.amount(payable);
-  const reference = 'RWM-' + (body.plan === 'deposit' ? 'DEP' : 'FULL') + '-' + (body.deliveryArea === 'metro' ? 'MTY' : 'NAC') + '-' + crypto.randomBytes(6).toString('hex').toUpperCase();
+  const reference = 'RWM-' + (body.plan === 'deposit' ? 'DEP' : 'FULL') + '-' + (body.deliveryArea === 'metro' ? 'MTY' : 'NAC') + (includeFullSet ? '-FS' : '') + '-' + crypto.randomBytes(6).toString('hex').toUpperCase();
   const base = payment.appBaseUrl(req, config);
   const returnUrl = (state) => {
     const url = new URL('/pago.html', base);
@@ -32,7 +38,8 @@ module.exports = async function handler(req, res) {
   };
   const purchaseLabel = body.plan === 'deposit' ? 'Anticipo del 50%' : 'Pago completo';
   const deliveryLabel = body.deliveryArea === 'metro' ? 'Monterrey y área metropolitana' : 'Envío nacional';
-  const title = ('Royal Watch MTY | ' + product.marca + ' ' + product.modelo + ' | ' + purchaseLabel).slice(0, 240);
+  const fullSetLabel = includeFullSet ? ' | Full Set (+$1,000 MXN)' : '';
+  const title = ('Royal Watch MTY | ' + product.marca + ' ' + product.modelo + fullSetLabel + ' | ' + purchaseLabel).slice(0, 240);
   const orderBody = {
     type: 'online',
     processing_mode: 'manual',
@@ -59,6 +66,8 @@ module.exports = async function handler(req, res) {
       plan: body.plan,
       deliveryArea: body.deliveryArea,
       amount: payableText,
+      fullSet: includeFullSet,
+      fullSetAmount: payment.amount(fullSetAmount),
       currency: 'MXN',
       deliveryWindow: '1–3 días hábiles',
       product: { brand: product.marca, model: product.modelo, slug: payment.slugFor(product) },

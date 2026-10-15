@@ -9,6 +9,15 @@
     let photoTouchStart = null;
     let suppressPhotoOpen = false;
     let paymentAvailable = false;
+    let includeFullSet = false;
+    const FULL_SET_PRICE = 1000;
+    const FULL_SET_VIDEOS = {
+        rolex: [{ src: "relojes/full-set/full-set-rolex.mp4", poster: "relojes/full-set/full-set-rolex.jpg", label: "Rolex · presentación" }],
+        cartier: [
+            { src: "relojes/full-set/full-set-cartier-01.mp4", poster: "relojes/full-set/full-set-cartier-01.jpg", label: "Cartier · presentación 1" },
+            { src: "relojes/full-set/full-set-cartier-02.mp4", poster: "relojes/full-set/full-set-cartier-02.jpg", label: "Cartier · presentación 2" }
+        ]
+    };
     const byId = (id) => document.getElementById(id);
     const catalog = () => typeof WATCHES_PRODUCTS !== "undefined" && Array.isArray(WATCHES_PRODUCTS) ? WATCHES_PRODUCTS : [];
     const safeRead = (key, fallback) => {
@@ -32,6 +41,7 @@
         const promo = listed > 0 && month === "9" && (brand === "rolex" || brand === "cartier");
         return { price: promo ? Math.round(listed * .9) : listed, original: promo ? listed : (Number(product?.precioAnterior) || 0), promo };
     };
+    const totalPrice = () => pricing().price + (includeFullSet ? FULL_SET_PRICE : 0);
     const money = (amount) => {
         const displayed = currency === "USD" ? amount / EXCHANGE_RATE : amount;
         return amount > 0 ? `$${displayed.toLocaleString("en-US", { maximumFractionDigits: 0 })} ${currency}` : "Consultar precio";
@@ -44,7 +54,9 @@
             Apartado: "¿Tienen alguna pieza similar disponible?",
             Vendido: "¿Podrían ayudarme a encontrar una pieza similar?"
         };
-        const message = `Hola, me interesa el reloj *${product.marca} ${product.modelo}* (Ref: *${product.referencia || "S/R"}*). Precio mostrado: *${value.price > 0 ? money(value.price) : "Consultar precio"}*.${value.promo ? " Incluye el 10% de descuento de septiembre." : ""} ${intents[product.status] || intents.Disponible}`;
+        const supportsFullSet = Boolean(FULL_SET_VIDEOS[clean(product.marca).toLowerCase()]);
+        const fullSetNote = !supportsFullSet ? "" : (includeFullSet ? " Full Set: sí, +$1,000 MXN (presentación, estuche y accesorios correspondientes)." : " Full Set: no seleccionado.");
+        const message = "Hola, me interesa el reloj *" + product.marca + " " + product.modelo + "* (Ref: *" + (product.referencia || "S/R") + "*). Precio mostrado: *" + (totalPrice() > 0 ? money(totalPrice()) : "Consultar precio") + "*." + (value.promo ? " Incluye el 10% de descuento de septiembre." : "") + fullSetNote + " " + (intents[product.status] || intents.Disponible);
         return `https://api.whatsapp.com/send?phone=${WHATSAPP}&text=${encodeURIComponent(message)}`;
     };
     async function copyText(value) {
@@ -107,13 +119,13 @@
         const availabilityLabel = byId("availability-label");
         availabilityLabel.dataset.status = status.toLowerCase();
         const value = pricing();
-        byId("current-price").textContent = money(value.price);
+        byId("current-price").textContent = money(totalPrice());
         byId("old-price").hidden = !(value.original > 0);
-        byId("old-price").textContent = value.original > 0 ? money(value.original) : "";
+        byId("old-price").textContent = value.original > 0 ? money(value.original + (includeFullSet ? FULL_SET_PRICE : 0)) : "";
         byId("price-title").textContent = value.promo ? "Precio de septiembre" : (value.original ? "Precio de oportunidad" : "Precio publicado");
         byId("promo-badge").hidden = !value.promo;
-        byId("promo-copy").hidden = !value.promo;
-        byId("promo-copy").textContent = value.promo ? `10% de descuento aplicado al precio publicado. Ahorras ${money(value.original - value.price)} durante septiembre.` : "";
+        byId("promo-copy").hidden = !value.promo && !includeFullSet;
+        byId("promo-copy").textContent = value.promo ? "10% de descuento aplicado al precio publicado. Ahorras " + money(value.original - value.price) + " durante septiembre." + (includeFullSet ? " El Full Set agrega $1,000 MXN." : "") : (includeFullSet ? "El precio incluye Full Set por $1,000 MXN adicionales." : "");
         byId("price-disclaimer").textContent = currency === "USD"
             ? "Precio en USD referencial al tipo de cambio de $17.80 MXN por USD; confirma precio y disponibilidad con un asesor."
             : "Precio en MXN; confirma vigencia y disponibilidad con un asesor.";
@@ -124,12 +136,53 @@
         const wa = whatsappUrl();
         byId("whatsapp-action").href = wa;
         byId("mobile-whatsapp").href = wa;
-        byId("mobile-price").textContent = money(value.price);
+        byId("mobile-price").textContent = money(totalPrice());
         byId("mobile-contact").hidden = false;
         byId("mobile-contact").classList.toggle("is-unavailable", ["Apartado", "Vendido"].includes(status));
-        byId("action-caption").textContent = ["Disponible", "Consignado"].includes(status)
-            ? "Un asesor confirma existencia, condición y opciones de entrega antes de tu visita."
-            : "Consulta alternativas con el equipo; esta pieza no aparece como disponible.";
+        byId("action-caption").textContent = includeFullSet
+            ? "Full Set seleccionado: se suman $1,000 MXN al total. Confirma el contenido con el asesor."
+            : (["Disponible", "Consignado"].includes(status)
+                ? "Un asesor confirma existencia, condición y opciones de entrega antes de tu visita."
+                : "Consulta alternativas con el equipo; esta pieza no aparece como disponible.");
+    }
+    function renderFullSetOffer() {
+        const brand = clean(product.marca).toLowerCase();
+        const choices = FULL_SET_VIDEOS[brand];
+        if (!choices) return;
+        const offer = byId("full-set-offer");
+        const video = byId("full-set-video");
+        const tabs = byId("full-set-video-tabs");
+        const checkbox = byId("include-full-set");
+        offer.hidden = false;
+        video.muted = true;
+        video.defaultMuted = true;
+        video.setAttribute("muted", "");
+        video.setAttribute("playsinline", "");
+        const activateVideo = (choice, button) => {
+            video.pause();
+            video.src = choice.src;
+            video.poster = choice.poster;
+            video.load();
+            tabs.querySelectorAll("button").forEach((tab) => {
+                const active = tab === button;
+                tab.classList.toggle("active", active);
+                tab.setAttribute("aria-pressed", String(active));
+            });
+        };
+        choices.forEach((choice, index) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = choice.label;
+            button.setAttribute("aria-pressed", "false");
+            button.addEventListener("click", () => activateVideo(choice, button));
+            tabs.append(button);
+            if (index === 0) activateVideo(choice, button);
+        });
+        checkbox.addEventListener("change", () => {
+            includeFullSet = checkbox.checked;
+            renderStatusAndPrice();
+            updateCheckoutTotals();
+        });
     }
     function renderPhotos() {
         photos = [...new Set([safeImage(product.imagen), ...(Array.isArray(product.galeria) ? product.galeria.map(safeImage) : [])])];
@@ -255,7 +308,7 @@
         return document.querySelector("input[name=\"" + name + "\"]:checked")?.value || "";
     }
     function updateCheckoutTotals() {
-        const value = pricing().price;
+        const value = totalPrice();
         const delivery = selectedCheckoutValue("deliveryArea");
         const depositOption = document.querySelector("[data-plan-option=deposit]");
         const depositInput = document.querySelector("input[name=\"plan\"][value=\"deposit\"]");
@@ -264,7 +317,9 @@
         depositInput.disabled = !allowDeposit;
         if (!allowDeposit && depositInput.checked) document.querySelector("input[name=\"plan\"][value=\"full\"]").checked = true;
         const plan = selectedCheckoutValue("plan");
-        const dueNow = plan === "deposit" ? Math.round(value * 50) / 100 : value;
+        const dueNow = plan === "deposit" ? Math.round(value / 2) : value;
+        byId("checkout-full-set-row").hidden = !includeFullSet;
+        byId("checkout-full-set").textContent = "+" + formatMXN(FULL_SET_PRICE);
         byId("checkout-total").textContent = formatMXN(value);
         byId("checkout-due").textContent = formatMXN(dueNow);
         byId("checkout-due-label").textContent = plan === "deposit" ? "Anticipo en línea (50%)" : "Pagar ahora";
@@ -311,7 +366,7 @@
                 const response = await fetch("/api/create-payment", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", Accept: "application/json" },
-                    body: JSON.stringify({ slug: makeSlug(product), plan: selectedCheckoutValue("plan"), deliveryArea: selectedCheckoutValue("deliveryArea"), idempotencyKey: crypto.randomUUID() })
+                    body: JSON.stringify({ slug: makeSlug(product), plan: selectedCheckoutValue("plan"), deliveryArea: selectedCheckoutValue("deliveryArea"), includeFullSet, idempotencyKey: crypto.randomUUID() })
                 });
                 const result = await response.json();
                 if (!response.ok || !result.checkoutUrl || !result.orderId || !result.reference) throw new Error(result.error || "No pudimos iniciar el pago.");
@@ -410,7 +465,7 @@
         byId("product-intro").textContent = factList.length
             ? `Datos publicados para esta pieza: ${factList.join(" · ")}. Confirma condición, accesorios y entrega con un asesor.`
             : "Solicita al asesor las características, condición y accesorios de esta pieza antes de coordinar tu visita.";
-        renderPhotos(); renderSpecs(); renderStatusAndPrice(); setMeta(); renderRelated(); wireActions(); wireCheckout(); setupCheckout();
+        renderPhotos(); renderSpecs(); renderFullSetOffer(); renderStatusAndPrice(); setMeta(); renderRelated(); wireActions(); wireCheckout(); setupCheckout();
         if (window.lucide) window.lucide.createIcons();
     });
 })();

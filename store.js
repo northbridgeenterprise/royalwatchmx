@@ -143,24 +143,43 @@ function loadStoreCatalog() {
 // NAVIGATION
 // ========================
 function setupStoreNavigation() {
+    const nav = document.getElementById("store-nav");
+    const toggle = document.getElementById("mobile-menu-toggle");
+    const setMenuOpen = (open) => {
+        if (!nav || !toggle) return;
+        nav.classList.toggle("is-open", open);
+        toggle.setAttribute("aria-expanded", String(open));
+        toggle.setAttribute("aria-label", open ? "Cerrar menú principal" : "Abrir menú principal");
+        const label = toggle.querySelector("span");
+        if (label) label.textContent = open ? "Cerrar" : "Menú";
+        const icon = toggle.querySelector("[data-lucide]");
+        if (icon) { icon.setAttribute("data-lucide", open ? "x" : "menu"); initIcons(); }
+    };
+    if (toggle && nav) {
+        toggle.addEventListener("click", () => setMenuOpen(toggle.getAttribute("aria-expanded") !== "true"));
+        document.addEventListener("click", (event) => {
+            if (nav.classList.contains("is-open") && !nav.contains(event.target) && !toggle.contains(event.target)) setMenuOpen(false);
+        });
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && nav.classList.contains("is-open")) { setMenuOpen(false); toggle.focus(); }
+        });
+    }
     document.querySelectorAll(".nav-link").forEach(link => {
-        link.addEventListener("click", (e) => {
+        link.addEventListener("click", (event) => {
             const targetId = link.getAttribute("href");
-            if (targetId.startsWith("#")) {
-                e.preventDefault();
+            if (targetId && targetId.startsWith("#")) {
+                event.preventDefault();
                 const targetEl = document.querySelector(targetId);
                 if (targetEl) {
-                    const headerHeight = document.querySelector(".store-header").offsetHeight;
-                    window.scrollTo({
-                        top: targetEl.offsetTop - headerHeight,
-                        behavior: "smooth"
-                    });
+                    const header = document.querySelector(".store-header");
+                    const headerHeight = header ? header.offsetHeight : 0;
+                    window.scrollTo({ top: targetEl.offsetTop - headerHeight, behavior: "smooth" });
                 }
             }
+            setMenuOpen(false);
         });
     });
 }
-
 // ========================
 // SCROLL HEADER EFFECT
 // ========================

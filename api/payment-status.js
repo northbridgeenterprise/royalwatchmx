@@ -36,6 +36,8 @@ module.exports = async function handler(req, res) {
       paidAmount: payment.amount(paid),
       productAmount: payment.amount(details.plan === 'deposit' ? total * 2 : total),
       cashBalance: payment.amount(cashBalance),
+      fullSet: details.fullSet,
+      fullSetAmount: payment.amount(details.fullSet ? 1000 : 0),
       productTitle: title,
       deliveryWindow: '1–3 días hábiles'
     });

@@ -2897,3 +2897,32 @@ body { background: var(--bg-primary); }
 @media (prefers-reduced-motion: reduce) {
     .motion-video-card, .motion-play-button, .motion-more-button { transition: none; }
 }
+/* Compact accessible navigation for phones and smaller tablets */
+.mobile-menu-toggle { display: none; align-items: center; justify-content: center; gap: 7px; min-height: 40px; padding: 0 12px; border: 1px solid rgba(199,170,112,.42); color: #f3eddf; background: rgba(16,28,24,.96); font: 700 9px var(--font-sub); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+.mobile-menu-toggle svg { width: 16px; height: 16px; color: #d5bb7d; }
+.mobile-menu-toggle:focus-visible { outline: 2px solid #d5bb7d; outline-offset: 3px; }
+@media (max-width: 900px) {
+    .header-container { position: relative; }
+    .mobile-menu-toggle { display: inline-flex; }
+    .store-nav { display: none; position: absolute; z-index: 20; top: calc(100% + 1px); right: 14px; left: 14px; flex-direction: column; align-items: stretch; gap: 0; padding: 7px; border: 1px solid rgba(199,170,112,.28); background: rgba(13,23,18,.98); box-shadow: 0 20px 45px rgba(0,0,0,.3); backdrop-filter: blur(18px); }
+    .store-nav.is-open { display: flex; }
+    .store-nav .nav-link { padding: 14px 12px; border-bottom: 1px solid rgba(255,255,255,.08); color: #f0eee6; font-size: 10px; letter-spacing: .12em; }
+    .store-nav .nav-link:last-child { border-bottom: 0; }
+    .store-nav .nav-link::after { display: none; }
+}
+@media (max-width: 500px) { .mobile-menu-toggle { min-height: 37px; padding: 0 9px; gap: 5px; } .mobile-menu-toggle span { font-size: 8px; } }
+/* Keep the hero copy clear over high-contrast watch photography. */
+.hero-title { color: #fbf8ef; -webkit-text-fill-color: #fbf8ef; text-shadow: 0 4px 24px rgba(0,0,0,.54); }
+.hero-title em { color: #e2cb91; -webkit-text-fill-color: #e2cb91; }
+.hero-subtitle { color: #f3f1e9; text-shadow: 0 2px 14px rgba(0,0,0,.62); }
+.hero-tagline { color: #f0d69b; text-shadow: 0 2px 12px rgba(0,0,0,.75); }
+@media (max-width: 500px) {
+    .header-container { gap: 8px; padding-inline: 12px; }
+    .store-logo { flex: 0 1 auto; min-width: 0; gap: 7px; }
+    .logo-img { width: 38px; height: 38px; }
+    .logo-text h1 { font-size: 10px; letter-spacing: 1px; }
+    .logo-text span { font-size: 7px; letter-spacing: 1px; }
+    .header-settings { flex: 0 0 auto; margin-left: auto; }
+    .currency-toggle-wrapper { gap: 4px; }
+    .currency-btn { padding: 4px 6px; font-size: 8px; }
+}

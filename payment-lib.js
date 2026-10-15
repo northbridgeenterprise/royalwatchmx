@@ -108,14 +108,14 @@ function safeOrderUrl(value) {
 }
 
 function parseReference(value) {
-  return typeof value === 'string' && /^RWM-(FULL|DEP)-(MTY|NAC)-[A-F0-9]{12}$/.test(value) ? value : null;
+  return typeof value === 'string' && /^RWM-(FULL|DEP)-(MTY|NAC)(-FS)?-[A-F0-9]{12}$/.test(value) ? value : null;
 }
 
 function referenceDetails(reference) {
   const parsed = parseReference(reference);
   if (!parsed) return null;
   const parts = parsed.split('-');
-  return { plan: parts[1] === 'DEP' ? 'deposit' : 'full', deliveryArea: parts[2] === 'MTY' ? 'metro' : 'national' };
+  return { plan: parts[1] === 'DEP' ? 'deposit' : 'full', deliveryArea: parts[2] === 'MTY' ? 'metro' : 'national', fullSet: parts[3] === 'FS' };
 }
 
 function hmacValid(signature, requestId, dataId, secret) {

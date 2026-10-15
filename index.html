@@ -38,9 +38,13 @@
                 </div>
             </a>
 
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" type="button" aria-label="Abrir menú principal" aria-expanded="false" aria-controls="store-nav"><i data-lucide="menu" aria-hidden="true"></i><span>Menú</span></button>
+
             <!-- Navigation Menu -->
-            <nav class="store-nav" aria-label="Navegación principal">
+            <nav class="store-nav" id="store-nav" aria-label="Navegación principal">
                 <a href="#catalogo" class="nav-link">Catálogo</a>
+                <a href="#nuevos" class="nav-link">Recién agregados</a>
+                <a href="#relojes-en-video" class="nav-link">Videos</a>
                 <a href="#nosotros" class="nav-link">Nosotros</a>
                 <a href="#contacto" class="nav-link">Contacto</a>
             </nav>
@@ -175,6 +179,23 @@
         </div>
     </div>
 
+    <!-- Silent watch video showcase -->
+    <section class="motion-section" id="relojes-en-video" aria-labelledby="motion-title">
+        <div class="motion-container">
+            <div class="motion-heading">
+                <span class="motion-kicker">Una mirada más cercana</span>
+                <h3 id="motion-title">Relojes en movimiento.</h3>
+                <p>Acércate a los acabados, las carátulas y la presencia de cada pieza con una selección de videos de Royal Watch MTY.</p>
+                <span class="motion-proof-pill"><span aria-hidden="true"></span><strong id="motion-video-count">32</strong> clips · reproducción sin audio</span>
+            </div>
+            <div class="motion-video-grid" id="motion-video-grid" aria-label="Videos de relojes"></div>
+            <div class="motion-more-wrap">
+                <button type="button" class="motion-more-button" id="motion-more-button" aria-expanded="false">Ver los 32 videos</button>
+                <p class="motion-footnote">La disponibilidad, condición y precio de cada pieza se confirman con un asesor.</p>
+            </div>
+        </div>
+    </section>
+
     <!-- Catalog Section -->
     <section class="catalog-section" id="catalogo">
         <div class="catalog-container">
@@ -185,7 +206,7 @@
                 <p class="section-subtitle">Explora el inventario disponible. Si buscas una referencia especial, nuestro equipo puede ayudarte a encontrarla.</p>
             </div>
 
-            <section class="recent-arrivals reveal" aria-labelledby="recent-arrivals-title">
+            <section class="recent-arrivals reveal" id="nuevos" aria-labelledby="recent-arrivals-title">
                 <div class="recent-arrivals-copy">
                     <span class="recent-arrivals-kicker">Nuevas piezas</span>
                     <h4 id="recent-arrivals-title">Recién agregados</h4>
@@ -285,22 +306,6 @@
         </div>
     </section>
 
-    <!-- Silent watch video showcase -->
-    <section class="motion-section" id="relojes-en-video" aria-labelledby="motion-title">
-        <div class="motion-container">
-            <div class="motion-heading">
-                <span class="motion-kicker">Una mirada más cercana</span>
-                <h3 id="motion-title">Relojes en movimiento.</h3>
-                <p>Acércate a los acabados, las carátulas y la presencia de cada pieza con una selección de videos de Royal Watch MTY.</p>
-                <span class="motion-proof-pill"><span aria-hidden="true"></span><strong id="motion-video-count">32</strong> clips · reproducción sin audio</span>
-            </div>
-            <div class="motion-video-grid" id="motion-video-grid" aria-label="Videos de relojes"></div>
-            <div class="motion-more-wrap">
-                <button type="button" class="motion-more-button" id="motion-more-button" aria-expanded="false">Ver los 32 videos</button>
-                <p class="motion-footnote">La disponibilidad, condición y precio de cada pieza se confirman con un asesor.</p>
-            </div>
-        </div>
-    </section>
     <!-- About Us Section -->
     <section class="about-section" id="nosotros">
         <div class="about-container">
