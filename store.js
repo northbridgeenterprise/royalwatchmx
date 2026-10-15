@@ -351,12 +351,13 @@ function updatePriceBandLabels() {
     if (!select) return;
     const labels = [
         ["", "Cualquier precio"],
-        ["0:6500", `Menos de ${formatPrice(6500)}`],
-        ["6500:7000", `${formatPrice(6500)} – ${formatPrice(7000)}`],
-        ["7000:7200", `${formatPrice(7000)} – ${formatPrice(7200)}`],
-        ["7200:7400", `${formatPrice(7200)} – ${formatPrice(7400)}`],
-        ["7400:7800", `${formatPrice(7400)} – ${formatPrice(7800)}`],
-        ["7800:", `Desde ${formatPrice(7800)}`],
+        ["0:8000", `Menos de ${formatPrice(8000)}`],
+        ["8000:10000", `${formatPrice(8000)} – ${formatPrice(10000)}`],
+        ["10000:15000", `${formatPrice(10000)} – ${formatPrice(15000)}`],
+        ["15000:20000", `${formatPrice(15000)} – ${formatPrice(20000)}`],
+        ["20000:25000", `${formatPrice(20000)} – ${formatPrice(25000)}`],
+        ["25000:30000", `${formatPrice(25000)} – ${formatPrice(30000)}`],
+        ["30000:", `Desde ${formatPrice(30000)}`],
     ];
     [...select.options].forEach((option, index) => {
         if (labels[index]) option.textContent = labels[index][1];
