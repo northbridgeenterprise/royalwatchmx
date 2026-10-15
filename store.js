@@ -166,15 +166,25 @@ function setupStoreNavigation() {
 // ========================
 function setupScrollHeader() {
     const header = document.getElementById("store-header");
-    window.addEventListener("scroll", () => {
-        if (window.scrollY > 60) {
-            header.classList.add("scrolled");
-        } else {
-            header.classList.remove("scrolled");
-        }
-    }, { passive: true });
-}
+    const promoBar = document.getElementById("promo-bar");
+    if (!header) return;
 
+    const updatePromoOffset = () => {
+        const height = promoBar ? Math.ceil(promoBar.getBoundingClientRect().height) : 0;
+        document.documentElement.style.setProperty("--promo-bar-height", height + "px");
+    };
+    const updateScrollState = () => {
+        header.classList.toggle("scrolled", window.scrollY > 14);
+    };
+
+    updatePromoOffset();
+    updateScrollState();
+    window.addEventListener("resize", updatePromoOffset, { passive: true });
+    if (promoBar && "ResizeObserver" in window) {
+        new ResizeObserver(updatePromoOffset).observe(promoBar);
+    }
+    window.addEventListener("scroll", updateScrollState, { passive: true });
+}
 // ========================
 // SCROLL REVEAL
 // ========================

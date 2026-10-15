@@ -2799,3 +2799,25 @@ body { background: var(--bg-primary); }
     .recent-arrivals-action { align-items: flex-start; }
     .recent-arrivals-button { width: 100%; }
 }
+
+
+/* iPhone sticky-header polish: align below the announcement, then compact at the viewport edge. */
+.store-header {
+    top: var(--promo-bar-height, 36px);
+    transition: top .28s cubic-bezier(.2,.75,.25,1), background-color .3s ease, box-shadow .3s ease;
+}
+.store-header.scrolled { top: 0; }
+
+@media (max-width: 768px) {
+    .store-header.scrolled { top: env(safe-area-inset-top, 0px); }
+    .header-container { transition: min-height .25s ease, padding .25s ease; }
+    .logo-img { transition: width .25s ease, height .25s ease, box-shadow .3s ease; }
+    .store-header.scrolled .header-container { min-height: 56px; padding-block: 6px; }
+    .store-header.scrolled .logo-img { width: 32px; height: 32px; }
+    .store-header.scrolled .logo-text h1 { font-size: 9px; letter-spacing: 1.1px; }
+    .store-header.scrolled .logo-text span,
+    .store-header.scrolled .exchange-rate-note { display: none; }
+    .store-header.scrolled .currency-toggle-wrapper { padding-bottom: 0; }
+    .store-header.scrolled .currency-btn { padding: 4px 6px; font-size: 8px; }
+    .store-header.scrolled .nav-link { font-size: 8px; }
+}
